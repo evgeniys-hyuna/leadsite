@@ -24,19 +24,8 @@ class ExecutorCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
-        
-        $console->writeLine('Updating keywords');
-        
-        $this->updateKeywordsStatus();
-        
         $console->writeLine('Initializing');
-        
-//        if (Executor::model()->count('deleted_at IS NULL') >= Settings::getValue(Settings::SIMULTANEOUS_EXECUTORS_LIMIT)) {
-//            $console->error('Executors limit is reached');
-//            
-//            return;
-//        }
-        
+
         $executor = new Executor();
         
         // Search for task
@@ -169,7 +158,4 @@ class ExecutorCommand extends CConsoleCommand {
         }
     }
     
-    public function actionUpdateKeywordStatus() {
-        Console::writeLine('OK');
-    }
 }

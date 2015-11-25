@@ -166,15 +166,11 @@ class Executor extends CActiveRecord {
         
         if (($keyword = Keyword::model()->find($criteria))) {
             $this->keyword_id = $keyword->id;
-            $this->update();
-            
             $keyword->setStatus(Keyword::STATUS_TAKEN);
             
             return true;
         }
         
-        $this->setStatus(self::STATUS_PENDING);
-
         return false;
     }
     

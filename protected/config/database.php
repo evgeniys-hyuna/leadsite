@@ -6,7 +6,7 @@ return array(
 	// uncomment the following lines to use a MySQL database
 	'connectionString' => 'mysql:host=localhost;dbname=se_leadsite',
 	'emulatePrepare' => true,
-	'username' => 'root',
-	'password' => 'jomedia123',
+	'username' => 'admin',
+	'password' => 'admin',
 	'charset' => 'utf8',
 );

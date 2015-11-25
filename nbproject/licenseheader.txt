@@ -1,3 +1,0 @@
-${licenseFirst}
-${licensePrefix}<evgeniy.siderka@hyuna.bb>
-${licenseLast}

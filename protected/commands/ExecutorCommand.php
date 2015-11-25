@@ -36,9 +36,8 @@ class ExecutorCommand extends CConsoleCommand {
 //            
 //            return;
 //        }
-
+        
         $executor = new Executor();
-        $executor->save();
         
         // Search for task
         $console->writeLine('Searching for tasks');
@@ -46,17 +45,19 @@ class ExecutorCommand extends CConsoleCommand {
         try {
             if (!$executor->findTask()) {
                 $console->writeLine('No new tasks');
-                $executor->stop();
+//                $executor->stop();
 
                 return;
             }
         } catch (Exception $ex) {
 //            $executor->keyword->setStatus(Keyword::STATUS_PENDING);
-            $executor->setStatus(Executor::STATUS_ERROR);
+//            $executor->setStatus(Executor::STATUS_ERROR);
             $console->error($ex->getMessage());
             
             return;
         }
+        
+        $executor->save();
         
         // Start check
         $console->writeLine('Checking keyword "' . $executor->keyword->name . '"');

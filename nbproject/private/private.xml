@@ -1,42 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/commands/ExecutorCommand.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/Console.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/reports.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/ContactForm.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Executor.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/ignore_list.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/commands/ReportCommand.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Report.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/settings.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/all_results.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Site.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/ASearchEngine.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Settings.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/config/console.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/GoogleSearchEngineFr.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/index.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/commands/ExecutorTestCommand.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/GoogleSearchEngineEs.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/keyword_details.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/String.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/controllers/SiteController.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Proxy.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/keywords.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/statistics.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/site/reports_browse.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/BingSearchEngine.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/IgnoreList.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/commands/TestCommand.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/views/layouts/main.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/KeywordForm.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/models/Keyword.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/Time.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/GoogleSearchEngineIt.php</file>
-            <file>file:/media/dev1/eugenes/Projects/yii/leadsite/protected/components/SearchEngine/GoogleSearchEngine.php</file>
-        </group>
-    </open-files>
 </project-private>

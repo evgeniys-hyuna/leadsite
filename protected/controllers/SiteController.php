@@ -34,14 +34,6 @@ class SiteController extends Controller {
         ));
     }
     
-    public function actionAllResults($keywordId) {
-        $keyword = Keyword::model()->findByPk($keywordId);
-        
-        $this->render('all_results', array(
-            'keyword' => $keyword,
-        ));
-    }
-
     /**
      * This is the action to handle external exceptions.
      */

@@ -26,59 +26,16 @@ $this->pageTitle=Yii::app()->name;
             array(
                 'name' => 'created_at',
                 'header' => 'Added On',
+                'type' => 'raw',
                 'value' => function ($e) {
-                    return Time::toPretty($e->created_at);
+                    return CHtml::tag('span', array(
+                        'title' => String::build('by {search_engine} on {position} position', array(
+                            'search_engine' => $e->keyword->search_engine,
+                            'position' => $e->position,
+                        )),
+                    ), Time::toPretty($e->created_at));
                 }
             ),
         ),
     )) ?>
 </div>
-
-<!--<h3>Keywords and history</h3>
-
-<div>
-    </?php $this->widget('zii.widgets.grid.CGridView', array(
-        'id' => 'grvLeads',
-        'dataProvider' => $keyword->buildLeads(),
-        'columns' => array(
-            array(
-                'name' => 'keyword',
-                'header' => 'Keyword',
-                'type' => 'raw',
-                'value' => function ($e) {
-                    return String::build('<a href="{link}" title="Added on {created_at}">{keyword}</a>', array(
-                        'link' => Yii::app()->createUrl('site/keywordDetails', array(
-                            'keywordId' => $e['id'],
-                        )),
-                        'created_at' => Time::toPretty($e->created_at),
-                        'keyword' => $e['keyword'],
-                    ));
-                }
-            ),
-            array(
-                'name' => 'domain',
-                'header' => 'Top Result',
-                'type' => 'raw',
-                'value' => function ($e) {
-                    return $e['domain'] . ' ' . CHtml::link('View all', Yii::app()->createUrl('site/allResults', array(
-                        'keywordId' => $e['id'],
-                    )));
-                }
-            ),
-            array(
-                'name' => 'search_engine',
-                'header' => 'Search Engine',
-                'value' => function ($e) {
-                    return $e['search_engine'];
-                }
-            ),
-            array(
-                'name' => 'updated',
-                'header' => 'Updated',
-                'value' => function ($e) {
-                    return Time::toPretty($e['updated']);
-                }
-            ),
-        ),
-    )) ?>
-</div>-->

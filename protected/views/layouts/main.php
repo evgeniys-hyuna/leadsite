@@ -66,8 +66,7 @@
 
             <div id="footer">
                 Copyright &copy; <?php echo date('Y'); ?> Ad-center<br/>
-                All Rights Reserved.<br/>
-                <!--<a href="mailto:evgeniy.siderka@hyuna.bb">Eugen Siderka</a>-->
+                All Rights Reserved<br/>
             </div><!-- footer -->
 
         </div><!-- page -->

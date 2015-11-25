@@ -98,6 +98,7 @@ class Keyword extends CActiveRecord {
         $criteria->compare('created_at', $this->created_at, true);
         $criteria->compare('updated_at', $this->updated_at, true);
         $criteria->addCondition('deleted_at IS NULL');
+        $criteria->order = 'created_at DESC';
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,

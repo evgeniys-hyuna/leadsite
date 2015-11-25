@@ -185,7 +185,12 @@ class Report extends CActiveRecord {
         $reports = array();
         
         foreach ($files as $f) {
+            if (in_array($f, array('.', '..'))) {
+                continue;
+            }
+            
             array_push($reports, array(
+                'id' => null, // Avoid "unknown index 'id'" error
                 'name' => $f,
             ));
         }

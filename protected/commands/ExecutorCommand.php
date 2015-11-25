@@ -45,13 +45,10 @@ class ExecutorCommand extends CConsoleCommand {
         try {
             if (!$executor->findTask()) {
                 $console->writeLine('No new tasks');
-//                $executor->stop();
 
                 return;
             }
         } catch (Exception $ex) {
-//            $executor->keyword->setStatus(Keyword::STATUS_PENDING);
-//            $executor->setStatus(Executor::STATUS_ERROR);
             $console->error($ex->getMessage());
             
             return;

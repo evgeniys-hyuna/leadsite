@@ -143,8 +143,6 @@ class Executor extends CActiveRecord {
     }
     
     public function findTask() {
-        $this->setStatus(self::STATUS_SEARCHING);
-        
         $criteria = new CDbCriteria();
         $criteria->alias = 'keyword';
         $criteria->addCondition('keyword.status = :status');

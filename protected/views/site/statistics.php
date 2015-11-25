@@ -4,6 +4,10 @@
 $this->pageTitle=Yii::app()->name;
 ?>
 
+<p>Tasks done: <?= Executor::model()->count('status = \'' . Executor::STATUS_DONE . '\'') ?></p>
+<p>Tasks in total: <?= Executor::model()->count() ?></p>
+<p>Pending keywords: <?= Keyword::model()->count('status = \'' . Keyword::STATUS_PENDING . '\'') ?></p>
+
 <h3>Active Executors</h3>
 
 <div>

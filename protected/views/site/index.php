@@ -26,8 +26,14 @@ $this->pageTitle=Yii::app()->name;
             array(
                 'name' => 'created_at',
                 'header' => 'Added On',
+                'type' => 'raw',
                 'value' => function ($e) {
-                    return Time::toPretty($e->created_at);
+                    return CHtml::tag('span', array(
+                        'title' => String::build('by {search_engine} on {position} position', array(
+                            'search_engine' => $e->keyword->search_engine,
+                            'position' => $e->position,
+                        )),
+                    ), Time::toPretty($e->created_at));
                 }
             ),
         ),

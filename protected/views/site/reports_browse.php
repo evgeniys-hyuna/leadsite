@@ -8,9 +8,7 @@ $this->pageTitle=Yii::app()->name;
 
 <div>
     <?php $this->widget('zii.widgets.grid.CGridView', array(
-        'id' => 'grvKeywords',
         'dataProvider' => $dataProvider,
-        'htmlOptions' => array(),
         'columns' => array(
             array(
                 'name' => 'name',

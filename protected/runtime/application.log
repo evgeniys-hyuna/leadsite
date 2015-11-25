@@ -1518,3 +1518,25 @@ Stack trace:
 #10 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
 #11 {main}
 ---
+2015/11/25 12:30:58 [error] [php] Undefined index: id (/var/www/html/framework/web/CArrayDataProvider.php:111)
+Stack trace:
+#0 /var/www/html/framework/zii/widgets/CBaseListView.php(150): CGridView->renderKeys()
+#1 /var/www/html/framework/web/CBaseController.php(181): CGridView->run()
+#2 /var/www/html/leadsite/protected/views/site/reports_browse.php(26): SiteController->widget()
+#3 /var/www/html/framework/web/CBaseController.php(126): require()
+#4 /var/www/html/framework/web/CBaseController.php(95): SiteController->renderInternal()
+#5 /var/www/html/framework/web/CController.php(869): SiteController->renderFile()
+#6 /var/www/html/framework/web/CController.php(782): SiteController->renderPartial()
+#7 /var/www/html/leadsite/protected/controllers/SiteController.php(235): SiteController->render()
+#8 /var/www/html/framework/web/actions/CInlineAction.php(49): SiteController->actionReportsBrowse()
+#9 /var/www/html/framework/web/CController.php(308): CInlineAction->runWithParams()
+#10 /var/www/html/framework/web/CController.php(286): SiteController->runAction()
+#11 /var/www/html/framework/web/CController.php(265): SiteController->runActionWithFilters()
+#12 /var/www/html/framework/web/CWebApplication.php(282): SiteController->run()
+#13 /var/www/html/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#14 /var/www/html/framework/base/CApplication.php(184): CWebApplication->processRequest()
+#15 /var/www/html/leadsite/index.php(13): CWebApplication->run()
+REQUEST_URI=/leadsite/index.php?r=site/reportsBrowse
+in /var/www/html/leadsite/protected/views/site/reports_browse.php (26)
+in /var/www/html/leadsite/protected/controllers/SiteController.php (235)
+in /var/www/html/leadsite/index.php (13)

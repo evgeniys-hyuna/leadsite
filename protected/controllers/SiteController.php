@@ -171,7 +171,7 @@ class SiteController extends Controller {
             $emails = array();
             
             if (count($emails = explode(PHP_EOL, $postReport['email'])) <= 1) {
-                $emails = array($postIgnoreList['email']);
+                $emails = array($postReport['email']);
             }
             
             foreach ($emails as $e) {

@@ -149,11 +149,22 @@ class Site extends CActiveRecord {
         $criteria->addCondition('site.deleted_at IS NULL');
         $criteria->group = 'site.domain';
         $criteria->distinct = true;
+        $sites = Site::model()->findAll($criteria);
+        $sitesCount = count($sites);
         
-        // Remake to arraydataprovider with isInIgnoreList check
+        for ($i = 0; $i < $sitesCount; $i++) {
+            if (IgnoreList::isInList($sites[$i]->domain)) {
+                unset($sites[$i]);
+            }
+        }
         
-        return new CActiveDataProvider($this, array(
-            'criteria' => $criteria,
+        return new CArrayDataProvider($sites, array(
+            'sort' => array(
+//                'defaultOrder' => 'name DESC',
+                'attributes' => array(
+                    '*',
+                )
+            ),
             'pagination' => array(
                 'pageSize' => 50,
             ),

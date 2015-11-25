@@ -104,8 +104,25 @@ class ExecutorCommand extends CConsoleCommand {
             
             return;
         }
+        
+        // Mark previous results as deleted
+        $previousSiteCriteria = new CDbCriteria();
+        $previousSiteCriteria->alias = 'site';
+        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
+        $previousSiteCriteria->params = array(
+            ':keyword_id' => $executor->keyword_id,
+        );
+        $previousSiteCriteria->order = 'site.executor DESC';
+        $previousSiteCriteria->limit = 1;
+        $previousSite = Site::model()->find($previousSiteCriteria);
+        
+        Site::model()->updateAll(array(
+            'deleted_at' => date(Time::FORMAT_STANDART),
+        ), 'executor_id = :executor_id', array(
+            ':executor_id' => $previousSite->executor_id,
+        ));
 
-        // Save results
+        // Save new results
         $console->progressStart('Saving results', count($sites));
 
         foreach ($sites as $s) {

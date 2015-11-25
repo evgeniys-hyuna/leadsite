@@ -139,23 +139,4 @@ class ExecutorCommand extends CConsoleCommand {
         return;
     }
     
-    private function updateKeywordsStatus() {
-        $criteria = new CDbCriteria();
-        $criteria->alias = 'keyword';
-        $criteria->addCondition('keyword.period > 0');
-        $criteria->addNotInCondition('keyword.status', array(
-            Keyword::STATUS_PENDING,
-            Keyword::STATUS_TAKEN,
-            Keyword::STATUS_IN_PROGRESS,
-        ));
-        
-        $keyword = Keyword::model()->findAll($criteria);
-        
-        foreach ($keyword as $k) {
-            if (time() > strtotime($k->checked_at) + $k->period) {
-                $k->setStatus(Keyword::STATUS_PENDING);
-            }
-        }
-    }
-    
 }

@@ -24,19 +24,8 @@ class ExecutorCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
-        
-        $console->writeLine('Updating keywords');
-        
-        $this->updateKeywordsStatus();
-        
         $console->writeLine('Initializing');
-        
-//        if (Executor::model()->count('deleted_at IS NULL') >= Settings::getValue(Settings::SIMULTANEOUS_EXECUTORS_LIMIT)) {
-//            $console->error('Executors limit is reached');
-//            
-//            return;
-//        }
-        
+
         $executor = new Executor();
         
         // Search for task
@@ -112,15 +101,16 @@ class ExecutorCommand extends CConsoleCommand {
         $previousSiteCriteria->params = array(
             ':keyword_id' => $executor->keyword_id,
         );
-        $previousSiteCriteria->order = 'site.executor DESC';
+        $previousSiteCriteria->order = 'site.executor_id DESC';
         $previousSiteCriteria->limit = 1;
-        $previousSite = Site::model()->find($previousSiteCriteria);
         
-        Site::model()->updateAll(array(
-            'deleted_at' => date(Time::FORMAT_STANDART),
-        ), 'executor_id = :executor_id', array(
-            ':executor_id' => $previousSite->executor_id,
-        ));
+        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+            Site::model()->updateAll(array(
+                'deleted_at' => date(Time::FORMAT_STANDART),
+            ), 'executor_id = :executor_id', array(
+                ':executor_id' => $previousSite->executor_id,
+            ));
+        }
 
         // Save new results
         $console->progressStart('Saving results', count($sites));
@@ -149,22 +139,4 @@ class ExecutorCommand extends CConsoleCommand {
         return;
     }
     
-    private function updateKeywordsStatus() {
-        $criteria = new CDbCriteria();
-        $criteria->alias = 'keyword';
-        $criteria->addCondition('keyword.period > 0');
-        $criteria->addNotInCondition('keyword.status', array(
-            Keyword::STATUS_PENDING,
-            Keyword::STATUS_TAKEN,
-            Keyword::STATUS_IN_PROGRESS,
-        ));
-        
-        $keyword = Keyword::model()->findAll($criteria);
-        
-        foreach ($keyword as $k) {
-            if (time() > strtotime($k->checked_at) + $k->period) {
-                $k->setStatus(Keyword::STATUS_PENDING);
-            }
-        }
-    }
 }

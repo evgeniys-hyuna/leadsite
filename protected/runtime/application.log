@@ -1985,3 +1985,29 @@ Stack trace:
 REQUEST_URI=/leadsite/index.php?r=site/statistics
 HTTP_REFERER=http://192.168.56.101/leadsite/index.php?r=site/keywords
 ---
+2015/11/25 13:34:06 [error] [system.db.CDbCommand] CDbCommand::fetch() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'site.executor' in 'order clause'. The SQL statement executed was: SELECT * FROM `lds_site` `site` WHERE site.keyword_id = :keyword_id ORDER BY site.executor DESC LIMIT 1.
+2015/11/25 13:34:06 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'site.executor' in 'order clause'. The SQL statement executed was: SELECT * FROM `lds_site` `site` WHERE site.keyword_id = :keyword_id ORDER BY site.executor DESC LIMIT 1' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(415): CDbCommand->queryInternal('fetch', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryRow()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1461): CActiveRecord->query(Object(CDbCriteria))
+#3 /var/www/html/leadsite/protected/commands/ExecutorCommand.php(117): CActiveRecord->find(Object(CDbCriteria))
+#4 [internal function]: ExecutorCommand->actionIndex(false, false)
+#5 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(ExecutorCommand), Array)
+#6 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#7 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#8 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#9 /var/www/html/framework/yiic.php(33): CApplication->run()
+#10 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#11 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#12 {main}
+---
+2015/11/25 13:39:26 [error] [php] Trying to get property of non-object (/var/www/html/leadsite/protected/commands/ExecutorCommand.php:122)
+Stack trace:
+#0 /var/www/html/framework/console/CConsoleCommandRunner.php(71): ExecutorCommand->run()
+#1 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#2 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#3 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#4 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#5 /var/www/html/leadsite/protected/yiic(4): require_once()
+

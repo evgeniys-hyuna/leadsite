@@ -90,21 +90,14 @@ $this->pageTitle=Yii::app()->name;
             array(
                 'name' => 'status',
                 'header' => 'Status',
+                'type' => 'raw',
                 'value' => function ($e) {
-                    return ucwords($e->status);
-                },
-            ),
-            array(
-                'name' => 'checked_at',
-                'header' => 'Checked',
-                'value' => function ($e) {
-                    return Time::toPretty($e->checked_at);
-                },
-            ),
-            array(
-                'header' => 'Next Check',
-                'value' => function ($e) {
-                    return $e->period ? date(Time::FORMAT_PRETTY, strtotime($e->checked_at) + $e->period) : 'No autocheck';
+                    return CHtml::tag('span', array(
+                        'title' => String::build('Last Check: {last_check} Next Check: {next_check}', array(
+                            'last_check' => Time::toPretty($e->checked_at),
+                            'next_check' => $e->period ? date(Time::FORMAT_PRETTY, strtotime($e->checked_at) + $e->period) : 'No autocheck',
+                        )),
+                    ), ucwords($e->status));
                 },
             ),
         ),

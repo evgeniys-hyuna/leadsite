@@ -112,15 +112,16 @@ class ExecutorCommand extends CConsoleCommand {
         $previousSiteCriteria->params = array(
             ':keyword_id' => $executor->keyword_id,
         );
-        $previousSiteCriteria->order = 'site.executor DESC';
+        $previousSiteCriteria->order = 'site.executor_id DESC';
         $previousSiteCriteria->limit = 1;
-        $previousSite = Site::model()->find($previousSiteCriteria);
         
-        Site::model()->updateAll(array(
-            'deleted_at' => date(Time::FORMAT_STANDART),
-        ), 'executor_id = :executor_id', array(
-            ':executor_id' => $previousSite->executor_id,
-        ));
+        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+            Site::model()->updateAll(array(
+                'deleted_at' => date(Time::FORMAT_STANDART),
+            ), 'executor_id = :executor_id', array(
+                ':executor_id' => $previousSite->executor_id,
+            ));
+        }
 
         // Save new results
         $console->progressStart('Saving results', count($sites));
@@ -166,5 +167,9 @@ class ExecutorCommand extends CConsoleCommand {
                 $k->setStatus(Keyword::STATUS_PENDING);
             }
         }
+    }
+    
+    public function actionUpdateKeywordStatus() {
+        Console::writeLine('OK');
     }
 }

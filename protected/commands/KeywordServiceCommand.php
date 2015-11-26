@@ -21,6 +21,7 @@ class KeywordServiceCommand extends CConsoleCommand {
         $console = Console::getInstance($isForced, $isDebug);
         
         $console->writeLine('Updating expired...');
+        
         $criteria = new CDbCriteria();
         $criteria->addCondition('(unix_timestamp(checked_at) + period) < unix_timestamp()');
         $criteria->addNotInCondition('status', array(
@@ -34,9 +35,10 @@ class KeywordServiceCommand extends CConsoleCommand {
         ), $criteria);
         
         $console->writeLine('Fixing InProgress...');
-        $keyword = Keyword::model()->findAll('status = \'' . Keyword::STATUS_IN_PROGRESS . '\'');
+        
+        $keyword;
 
-        if (!$keyword) {
+        if (!($keyword = Keyword::model()->findAll('status = \'' . Keyword::STATUS_IN_PROGRESS . '\''))) {
             $console->writeLine('No tasks');
             
             return;
@@ -47,7 +49,7 @@ class KeywordServiceCommand extends CConsoleCommand {
         foreach ($keyword as $k) {
             $console->progressStep();
 
-            $executor = Executor::model()->find('keyword_id = :keyword_id', array(
+            $executor = Executor::model()->findAll('keyword_id = :keyword_id', array(
                 ':keyword_id' => $k->id,
             ));
 
@@ -57,12 +59,14 @@ class KeywordServiceCommand extends CConsoleCommand {
                 continue;
             }
 
-            if (!in_array($executor->status, array(
-                Executor::STATUS_CHECKING,
-                Executor::STATUS_COOLDOWN,
-            ))) {
-                $executor->stop();
-                $k->setStatus(Keyword::STATUS_PENDING);
+            foreach ($executor as $e) {
+                if (!in_array($e->status, array(
+                    Executor::STATUS_CHECKING,
+                    Executor::STATUS_COOLDOWN,
+                ))) {
+                    $e->stop();
+                    $k->setStatus(Keyword::STATUS_PENDING);
+                }
             }
         }
         

@@ -25,7 +25,14 @@ class AlexaCommand extends CConsoleCommand {
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
         
-        $alexa = new AlexaSearchEngine();
+//        $alexa = new AlexaSearchEngine();
+        
+        $console->writeLine('Downloading...');
+//        $zipFile = File::download('http://s3.amazonaws.com/alexa-static/top-1m.csv.zip', Yii::app()->basePath . '/reports/download.zip');
+        $zipFile = fopen(Yii::app()->basePath . '/reports/download.zip', 'r');
+        $alexaRankingsFile = File::unzip($zipFile, Yii::app()->getBasePath() . '/reports/alexa/');
+        
+        $console->writeLine($zipFile ? 'Success' : 'Failure');
         
         return;
     }

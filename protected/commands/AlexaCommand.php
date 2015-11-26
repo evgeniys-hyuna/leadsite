@@ -24,15 +24,39 @@ class AlexaCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
+        $workingDirectory = Yii::app()->basePath . '/../uploads/alexa';
+        $zipUrl = 'http://s3.amazonaws.com/alexa-static/top-1m.csv.zip';
+        $zipPath = $workingDirectory . '/top-1m.csv.zip';
+        $csvPath = $workingDirectory . '/top-1m.csv';
+        $csvFile;
         
-//        $alexa = new AlexaSearchEngine();
+//        $console->operationStart('Downloading');
+//        
+//        if (!File::download($zipUrl, $zipPath)) {
+//            $console->error('Can\'t download file ' . $zipUrl);
+//            
+//            return;
+//        }
+//        
+//        $console->operationEnd();
+//        $console->operationStart('Extracting');
+//        
+//        if (!File::unzip($zipPath, $workingDirectory)) {
+//            $console->error('Can\'t unzip file ' . $zipPath);
+//            
+//            return;
+//        }
+//        
+//        $console->operationEnd();
+        $console->operationStart('Opening');
         
-        $console->writeLine('Downloading...');
-//        $zipFile = File::download('http://s3.amazonaws.com/alexa-static/top-1m.csv.zip', Yii::app()->basePath . '/reports/download.zip');
-        $zipFile = fopen(Yii::app()->basePath . '/reports/download.zip', 'r');
-        $alexaRankingsFile = File::unzip($zipFile, Yii::app()->getBasePath() . '/reports/alexa/');
+        if (!($csvFile = fopen($csvPath, 'r'))) {
+            $console->error('Can\'t open file ' . $csvPath);
+            
+            return;
+        }
         
-        $console->writeLine($zipFile ? 'Success' : 'Failure');
+        $console->operationEnd();
         
         return;
     }

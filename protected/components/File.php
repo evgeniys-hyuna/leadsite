@@ -26,6 +26,17 @@ class File {
     
     public static function zip($file, $zip) {}
     
-    public static function unzip($zip, $directory) {}
+    public static function unzip($zipFile, $directory) {
+        $zip = new ZipArchive();
+        
+        if (!$zip->open($zipFile)) {
+            return false;
+        }
+        
+        $zip->extractTo($directory);
+        $zip->close();
+        
+        return true;
+    }
     
 }

@@ -2030,3 +2030,46 @@ Stack trace:
 #5 /var/www/html/leadsite/protected/yiic.php(7): require_once()
 #6 /var/www/html/leadsite/protected/yiic(4): require_once()
 
+2015/11/26 10:25:00 [error] [php] ZipArchive::open() expects parameter 1 to be a valid path, object given (/var/www/html/leadsite/protected/components/File.php:32)
+Stack trace:
+#0 unknown(0): AlexaCommand->actionIndex()
+#1 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#2 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#3 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#4 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#5 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#6 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#7 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/26 10:26:35 [error] [php] ZipArchive::open() expects parameter 1 to be a valid path, object given (/var/www/html/leadsite/protected/components/File.php:32)
+Stack trace:
+#0 unknown(0): AlexaCommand->actionIndex()
+#1 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#2 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#3 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#4 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#5 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#6 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#7 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/26 10:27:16 [error] [php] ZipArchive::open() expects parameter 1 to be a valid path, resource given (/var/www/html/leadsite/protected/components/File.php:32)
+Stack trace:
+#0 unknown(0): AlexaCommand->actionIndex()
+#1 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#2 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#3 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#4 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#5 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#6 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#7 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/26 10:43:57 [error] [php] fopen(/var/www/html/leadsite/protected/../uploads/alexa/alexa/top-1m.csv): failed to open stream: No such file or directory (/var/www/html/leadsite/protected/commands/AlexaCommand.php:51)
+Stack trace:
+#0 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#1 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#2 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#3 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#4 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#5 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#6 /var/www/html/leadsite/protected/yiic(4): require_once()
+

@@ -148,6 +148,15 @@ class SiteController extends Controller {
         ));
     }
     
+    public function actionKeywordAlexa($keywordId, $alexaSearchMethod = Keyword::ALEXA_SEARCH_METHOD_COMBO) {
+        $keyword = Keyword::model()->findByPk($keywordId);
+        
+        $this->render('keyword_alexa', array(
+            'keyword' => $keyword,
+            'alexaSearchMethod' => $alexaSearchMethod,
+        ));
+    }
+    
     public function actionStatistics() {
         $executor = new Executor();
         

@@ -76,6 +76,10 @@ $this->pageTitle=Yii::app()->name;
     'keywordId' => $keyword->id,
 ))) ?>
 
+<?= CHtml::link('Alexa', Yii::app()->createUrl('site/keywordAlexa', array(
+    'keywordId' => $keyword->id,
+))) ?>
+
 <br /><br /><br />
 
 <h3 title="Shows all tasks for current keyword">All Results</h3>

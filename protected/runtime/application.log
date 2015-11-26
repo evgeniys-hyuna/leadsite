@@ -2073,3 +2073,132 @@ Stack trace:
 #5 /var/www/html/leadsite/protected/yiic.php(7): require_once()
 #6 /var/www/html/leadsite/protected/yiic(4): require_once()
 
+2015/11/26 12:46:34 [error] [php] Division by zero (/var/www/html/leadsite/protected/components/Console.php:252)
+Stack trace:
+#0 unknown(0): KeywordServiceCommand->actionIndex()
+#1 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#2 /var/www/html/framework/console/CConsoleCommandRunner.php(71): KeywordServiceCommand->run()
+#3 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#4 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#5 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#6 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#7 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/26 12:48:44 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens. The SQL statement executed was: SELECT * FROM `lds_keyword` `t` WHERE (period > 0 AND status = :status_checked) OR status = ':status_in_progress'.
+2015/11/26 12:48:44 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens. The SQL statement executed was: SELECT * FROM `lds_keyword` `t` WHERE (period > 0 AND status = :status_checked) OR status = ':status_in_progress'' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(396): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryAll()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1475): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(36): CActiveRecord->findAll('(period > 0 AND...', Array)
+#4 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#5 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#6 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#7 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#8 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#9 /var/www/html/framework/yiic.php(33): CApplication->run()
+#10 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#11 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#12 {main}
+---
+2015/11/26 12:54:42 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'in_progress' in 'where clause'. The SQL statement executed was: SELECT * FROM `lds_keyword` `t` WHERE status = in_progress.
+2015/11/26 12:54:42 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'in_progress' in 'where clause'. The SQL statement executed was: SELECT * FROM `lds_keyword` `t` WHERE status = in_progress' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(396): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryAll()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1475): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(37): CActiveRecord->findAll('status = in_pro...')
+#4 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#5 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#6 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#7 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#8 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#9 /var/www/html/framework/yiic.php(33): CApplication->run()
+#10 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#11 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#12 {main}
+---
+2015/11/26 13:01:05 [error] [system.db.CDbCommand] CDbCommand::fetch() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Lkeyword_id' in 'where clause'. The SQL statement executed was: SELECT * FROM `lds_executor` `t` WHERE keyword_id = Lkeyword_id LIMIT 1.
+2015/11/26 13:01:05 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Lkeyword_id' in 'where clause'. The SQL statement executed was: SELECT * FROM `lds_executor` `t` WHERE keyword_id = Lkeyword_id LIMIT 1' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(415): CDbCommand->queryInternal('fetch', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryRow()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1461): CActiveRecord->query(Object(CDbCriteria))
+#3 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(55): CActiveRecord->find('keyword_id = Lk...', Array)
+#4 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#5 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#6 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#7 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#8 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#9 /var/www/html/framework/yiic.php(33): CApplication->run()
+#10 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#11 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#12 {main}
+---
+2015/11/26 13:27:27 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'keyword.period) > NOW()) AND (keyword.status NOT IN ('pending', 'taken', 'in_pro' at line 1. The SQL statement executed was: SELECT * FROM `lds_keyword` `keyword` WHERE (DATE_ADD(keyword.checked_at, keyword.period) > NOW()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2)).
+2015/11/26 13:27:27 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'keyword.period) > NOW()) AND (keyword.status NOT IN ('pending', 'taken', 'in_pro' at line 1. The SQL statement executed was: SELECT * FROM `lds_keyword` `keyword` WHERE (DATE_ADD(keyword.checked_at, keyword.period) > NOW()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2))' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(396): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryAll()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1475): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(93): CActiveRecord->findAll(Object(CDbCriteria))
+#4 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(24): KeywordServiceCommand->updateExpired()
+#5 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#6 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#7 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#8 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#9 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#10 /var/www/html/framework/yiic.php(33): CApplication->run()
+#11 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#12 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#13 {main}
+---
+2015/11/26 13:30:32 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'keyword.period) > NOW()) AND (keyword.status NOT IN ('pending', 'taken', 'in_pro' at line 1. The SQL statement executed was: SELECT * FROM `lds_keyword` `keyword` WHERE (DATE_ADD(NOW(), keyword.period) > NOW()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2)).
+2015/11/26 13:30:32 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'keyword.period) > NOW()) AND (keyword.status NOT IN ('pending', 'taken', 'in_pro' at line 1. The SQL statement executed was: SELECT * FROM `lds_keyword` `keyword` WHERE (DATE_ADD(NOW(), keyword.period) > NOW()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2))' in /var/www/html/framework/db/CDbCommand.php:543
+Stack trace:
+#0 /var/www/html/framework/db/CDbCommand.php(396): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /var/www/html/framework/db/ar/CActiveRecord.php(1356): CDbCommand->queryAll()
+#2 /var/www/html/framework/db/ar/CActiveRecord.php(1475): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(93): CActiveRecord->findAll(Object(CDbCriteria))
+#4 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(24): KeywordServiceCommand->updateExpired()
+#5 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#6 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#7 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#8 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#9 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#10 /var/www/html/framework/yiic.php(33): CApplication->run()
+#11 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#12 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#13 {main}
+---
+2015/11/26 13:47:26 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'keyword.status' in 'where clause'. The SQL statement executed was: UPDATE `lds_keyword` SET `status`=:yp0 WHERE ((unix_timestamp(checked_at) + period) < unix_timestamp()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2)).
+2015/11/26 13:47:26 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'keyword.status' in 'where clause'. The SQL statement executed was: UPDATE `lds_keyword` SET `status`=:yp0 WHERE ((unix_timestamp(checked_at) + period) < unix_timestamp()) AND (keyword.status NOT IN (:ycp0, :ycp1, :ycp2))' in /var/www/html/framework/db/CDbCommand.php:358
+Stack trace:
+#0 /var/www/html/framework/db/ar/CActiveRecord.php(1771): CDbCommand->execute()
+#1 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(95): CActiveRecord->updateAll(Array, Object(CDbCriteria))
+#2 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(24): KeywordServiceCommand->updateExpired()
+#3 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#4 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#5 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#6 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#7 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#8 /var/www/html/framework/yiic.php(33): CApplication->run()
+#9 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#10 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#11 {main}
+---
+2015/11/26 13:48:02 [error] [exception.CDbException] exception 'CDbException' with message 'No columns are being updated for table "lds_keyword".' in /var/www/html/framework/db/schema/CDbCommandBuilder.php:395
+Stack trace:
+#0 /var/www/html/framework/db/ar/CActiveRecord.php(1770): CDbCommandBuilder->createUpdateCommand(Object(CMysqlTableSchema), Array, Object(CDbCriteria))
+#1 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(95): CActiveRecord->updateAll(Array, Object(CDbCriteria))
+#2 /var/www/html/leadsite/protected/commands/KeywordServiceCommand.php(24): KeywordServiceCommand->updateExpired()
+#3 [internal function]: KeywordServiceCommand->actionIndex(false, false)
+#4 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(KeywordServiceCommand), Array)
+#5 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#6 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#7 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#8 /var/www/html/framework/yiic.php(33): CApplication->run()
+#9 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#10 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#11 {main}
+---

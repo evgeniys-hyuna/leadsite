@@ -19,29 +19,54 @@ class KeywordServiceCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
-        $console->writeLine('Initializing');
         
+        $console->writeLine('Updating expired...');
         $criteria = new CDbCriteria();
-        $criteria->alias = 'keyword';
-        $criteria->addCondition('keyword.period > 0');
-        $criteria->addNotInCondition('keyword.status', array(
+        $criteria->addCondition('(unix_timestamp(checked_at) + period) < unix_timestamp()');
+        $criteria->addNotInCondition('status', array(
             Keyword::STATUS_PENDING,
             Keyword::STATUS_TAKEN,
             Keyword::STATUS_IN_PROGRESS,
         ));
         
-        $keyword = Keyword::model()->findAll($criteria);
+        Keyword::model()->updateAll(array(
+            'status' => Keyword::STATUS_PENDING,
+        ), $criteria);
         
-        $console->progressStart('Updating keywords', count($keyword));
+        $console->writeLine('Fixing InProgress...');
+        $keyword = Keyword::model()->findAll('status = \'' . Keyword::STATUS_IN_PROGRESS . '\'');
+
+        if (!$keyword) {
+            $console->writeLine('No tasks');
+            
+            return;
+        }
+        
+        $console->progressStart('Fixing', count($keyword));
         
         foreach ($keyword as $k) {
             $console->progressStep();
-            
-            if (time() > strtotime($k->checked_at) + $k->period) {
+
+            $executor = Executor::model()->find('keyword_id = :keyword_id', array(
+                ':keyword_id' => $k->id,
+            ));
+
+            if (!$executor) {
+                $k->setStatus(Keyword::STATUS_PENDING);
+
+                continue;
+            }
+
+            if (!in_array($executor->status, array(
+                Executor::STATUS_CHECKING,
+                Executor::STATUS_COOLDOWN,
+            ))) {
+                $executor->stop();
                 $k->setStatus(Keyword::STATUS_PENDING);
             }
         }
         
         $console->progressEnd();
     }
+    
 }

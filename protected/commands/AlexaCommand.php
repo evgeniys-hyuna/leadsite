@@ -57,6 +57,28 @@ class AlexaCommand extends CConsoleCommand {
         }
         
         $console->operationEnd();
+        $console->writeLine('Reading file');
+        $keyword = explode(' ', 'watch movie online');
+        $reportHtml = '';
+        $reportFile = Yii::app()->getBasePath() . '/../uploads/alexa/report.html';
+        $count = 0;
+        
+        $timeStart = time();
+        
+        while (($row = fgetcsv($csvFile))) {
+            foreach ($keyword as $k) {
+                if (($pos = strpos($row[1], $k)) !== false) {
+//                        $console->writeLine($keyword . ' is founded in ' . $row[1] . ' on pos ' . $pos);
+                    $reportHtml .= '<p>' . $row[0] . '. ' . $row[1] . '</p>';
+                    $count++;
+                }
+            }
+        }
+        
+        $console->writeLine('Readed for ' . (time() - $timeStart) . ' seconds');
+        $console->writeLine('Founded ' . $count . ' results');
+        
+        file_put_contents($reportFile, $reportHtml);
         
         return;
     }

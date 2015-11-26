@@ -14,6 +14,7 @@ class Settings extends CActiveRecord {
     const GOOGLE_SEARCH_COOLDOWN = 'Google search cooldown';
     const EXECUTOR_TASK_SEARCH_LIMIT = 'Executor task search limit';
     const ABUSE_COOLDOWN = 'Abuse cooldown';
+    const ALEXA_SEARCH_COOLDOWN = 5;
     
     /**
      * @return string the associated database table name

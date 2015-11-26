@@ -26,6 +26,9 @@ class Keyword extends CActiveRecord {
     const SEARCH_ENGINE_GOOGLE_FR = 'google.fr';
     const SEARCH_ENGINE_BING = 'bing';
     const SEARCH_ENGINE_YAHOO = 'yahoo';
+    const SEARCH_ENGINE_ALEXA = 'alexa';
+    const ALEXA_SEARCH_METHOD_PARTIAL = 'partial';
+    const ALEXA_SEARCH_METHOD_COMBO = 'combo';
 
     /**
      * @return string the associated database table name
@@ -202,6 +205,97 @@ class Keyword extends CActiveRecord {
                 'pageSize' => 20,
             ),
         ));
+    }
+    
+    public function searchAlexaRankings($alexaSearchMethod) {
+        $csvFile;
+        $result = array();
+        $keyword = array();
+        
+        if (!($csvFile = fopen(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv', 'r'))) {
+            return false;
+        }
+        
+        switch ($alexaSearchMethod) {
+            case self::ALEXA_SEARCH_METHOD_PARTIAL:
+                $keyword = explode(' ', $this->name);
+                break;
+            case self::ALEXA_SEARCH_METHOD_COMBO:
+                $part = explode(' ', $this->name);
+                $partsCount = count($part);
+                
+                if ($partsCount == 1) {
+                    $keyword = $part;
+                } else if ($partsCount == 2) {
+                    $keyword[] = implode('', $part);
+                    $keyword[] = implode('', array(
+                        $part[1],
+                        $part[0],
+                    ));
+                } else {
+                    foreach ($this->permutations($part) as $k) {
+                        $keyword[] = implode('', $k);
+                    }
+                }
+                
+                break;
+            default:
+                throw new Exception('Unknown search method ' . $alexaSearchMethod);
+        }
+        
+        while (($row = fgetcsv($csvFile))) {
+            foreach ($keyword as $k) {
+                if (($pos = strpos($row[1], $k)) !== false) {
+                    array_push($result, array(
+                        'id' => 0,
+                        'position' => $row[0],
+                        'domain' => $row[1],
+                    ));
+                }
+            }
+        }
+        
+        return new CArrayDataProvider($result, array(
+            'sort' => array(
+//                'defaultOrder' => 'name DESC',
+                'attributes' => array(
+                    '*',
+                )
+            ),
+            'pagination' => array(
+                'pageSize' => 50,
+            ),
+        ));
+    }
+    
+    private function permutations($set) {
+        $solutions = array();
+        $n = count($set);
+        $p = array_keys($set);
+        $i = 1;
+
+        while ($i < $n) {
+            if ($p[$i] > 0) {
+                $p[$i] --;
+                $j = 0;
+                
+                if ($i % 2 == 1) {
+                    $j = $p[$i];
+                }
+                
+                $tmp = $set[$j];
+                $set[$j] = $set[$i];
+                $set[$i] = $tmp;
+                $i = 1;
+                $solutions[] = $set;
+            }
+            elseif ($p[$i] == 0) {
+                $p[$i] = $i;
+                $i++;
+            }
+        }
+        
+        return $solutions;
     }
     
 }

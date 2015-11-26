@@ -2011,3 +2011,22 @@ Stack trace:
 #4 /var/www/html/leadsite/protected/yiic.php(7): require_once()
 #5 /var/www/html/leadsite/protected/yiic(4): require_once()
 
+2015/11/25 17:09:23 [error] [php] Undefined variable: consol (/var/www/html/leadsite/protected/commands/AlexaCommand.php:28)
+Stack trace:
+#0 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#1 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#2 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#3 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#4 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#5 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/25 17:12:12 [error] [php] file_put_contents(/var/www/html/leadsite/protected/report/test.html): failed to open stream: No such file or directory (/var/www/html/leadsite/protected/commands/AlexaCommand.php:48)
+Stack trace:
+#0 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#1 /var/www/html/framework/console/CConsoleCommandRunner.php(71): AlexaCommand->run()
+#2 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#3 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#4 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#5 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#6 /var/www/html/leadsite/protected/yiic(4): require_once()
+

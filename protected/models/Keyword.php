@@ -26,6 +26,7 @@ class Keyword extends CActiveRecord {
     const SEARCH_ENGINE_GOOGLE_FR = 'google.fr';
     const SEARCH_ENGINE_BING = 'bing';
     const SEARCH_ENGINE_YAHOO = 'yahoo';
+    const SEARCH_ENGINE_ALEXA = 'alexa';
 
     /**
      * @return string the associated database table name

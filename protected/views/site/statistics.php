@@ -4,9 +4,9 @@
 $this->pageTitle=Yii::app()->name;
 ?>
 
-<p>Tasks done: <?= Executor::model()->count('status = \'' . Executor::STATUS_DONE . '\'') ?></p>
-<p>Tasks in total: <?= Executor::model()->count() ?></p>
+<p>Tasks done: <?= Executor::model()->count('status = \'' . Executor::STATUS_DONE . '\'') ?> / <?= Executor::model()->count() ?></p>
 <p>Pending keywords: <?= Keyword::model()->count('status = \'' . Keyword::STATUS_PENDING . '\'') ?></p>
+<p>Alexa Rankings file updated on: <?= date(Time::FORMAT_PRETTY, filemtime(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv')) ?></p>
 
 <h3>Active Executors</h3>
 

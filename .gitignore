@@ -5,3 +5,4 @@ protected/runtime/*
 protected/data/*.db
 protected/reports/*
 uploads/*
+uploads/alexa/*

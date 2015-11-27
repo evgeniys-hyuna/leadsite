@@ -27,58 +27,26 @@ class AlexaCommand extends CConsoleCommand {
         $workingDirectory = Yii::app()->basePath . '/../uploads/alexa';
         $zipUrl = 'http://s3.amazonaws.com/alexa-static/top-1m.csv.zip';
         $zipPath = $workingDirectory . '/top-1m.csv.zip';
-        $csvPath = $workingDirectory . '/top-1m.csv';
-        $csvFile;
         
-//        $console->operationStart('Downloading');
-//        
-//        if (!File::download($zipUrl, $zipPath)) {
-//            $console->error('Can\'t download file ' . $zipUrl);
-//            
-//            return;
-//        }
-//        
-//        $console->operationEnd();
-//        $console->operationStart('Extracting');
-//        
-//        if (!File::unzip($zipPath, $workingDirectory)) {
-//            $console->error('Can\'t unzip file ' . $zipPath);
-//            
-//            return;
-//        }
-//        
-//        $console->operationEnd();
-        $console->operationStart('Opening');
+        $console->operationStart('Downloading Alexa Rankings archive');
         
-        if (!($csvFile = fopen($csvPath, 'r'))) {
-            $console->error('Can\'t open file ' . $csvPath);
+        if (!File::download($zipUrl, $zipPath)) {
+            $console->error('Can\'t download file ' . $zipUrl);
             
             return;
         }
         
         $console->operationEnd();
-        $console->writeLine('Reading file');
-        $keyword = explode(' ', 'watch movie online');
-        $reportHtml = '';
-        $reportFile = Yii::app()->getBasePath() . '/../uploads/alexa/report.html';
-        $count = 0;
+        $console->operationStart('Extracting');
         
-        $timeStart = time();
-        
-        while (($row = fgetcsv($csvFile))) {
-            foreach ($keyword as $k) {
-                if (($pos = strpos($row[1], $k)) !== false) {
-//                        $console->writeLine($keyword . ' is founded in ' . $row[1] . ' on pos ' . $pos);
-                    $reportHtml .= '<p>' . $row[0] . '. ' . $row[1] . '</p>';
-                    $count++;
-                }
-            }
+        if (!File::unzip($zipPath, $workingDirectory)) {
+            $console->error('Can\'t unzip file ' . $zipPath);
+            
+            return;
         }
         
-        $console->writeLine('Readed for ' . (time() - $timeStart) . ' seconds');
-        $console->writeLine('Founded ' . $count . ' results');
-        
-        file_put_contents($reportFile, $reportHtml);
+        $console->operationEnd();
+        $console->writeLine('Update completed successfully');
         
         return;
     }

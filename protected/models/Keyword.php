@@ -27,6 +27,7 @@ class Keyword extends CActiveRecord {
     const SEARCH_ENGINE_BING = 'bing';
     const SEARCH_ENGINE_YAHOO = 'yahoo';
     const SEARCH_ENGINE_ALEXA = 'alexa';
+    const ALEXA_SEARCH_METHOD_FULL = 'full';
     const ALEXA_SEARCH_METHOD_PARTIAL = 'partial';
     const ALEXA_SEARCH_METHOD_COMBO = 'combo';
 
@@ -209,50 +210,24 @@ class Keyword extends CActiveRecord {
     
     public function searchAlexaRankings($alexaSearchMethod) {
         $csvFile;
-        $result = array();
-        $keyword = array();
+        $result;
         
         if (!($csvFile = fopen(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv', 'r'))) {
             return false;
         }
         
         switch ($alexaSearchMethod) {
+            case self::ALEXA_SEARCH_METHOD_FULL:
+                $result = $this->alexaSearchFull($csvFile);
+                break;
             case self::ALEXA_SEARCH_METHOD_PARTIAL:
-                $keyword = explode(' ', $this->name);
+                $result = $this->alexaSearchPartial($csvFile);
                 break;
             case self::ALEXA_SEARCH_METHOD_COMBO:
-                $part = explode(' ', $this->name);
-                $partsCount = count($part);
-                
-                if ($partsCount == 1) {
-                    $keyword = $part;
-                } else if ($partsCount == 2) {
-                    $keyword[] = implode('', $part);
-                    $keyword[] = implode('', array(
-                        $part[1],
-                        $part[0],
-                    ));
-                } else {
-                    foreach ($this->permutations($part) as $k) {
-                        $keyword[] = implode('', $k);
-                    }
-                }
-                
+                $result = $this->alexaSearchCombo($csvFile);
                 break;
             default:
                 throw new Exception('Unknown search method ' . $alexaSearchMethod);
-        }
-        
-        while (($row = fgetcsv($csvFile))) {
-            foreach ($keyword as $k) {
-                if (($pos = strpos($row[1], $k)) !== false) {
-                    array_push($result, array(
-                        'id' => 0,
-                        'position' => $row[0],
-                        'domain' => $row[1],
-                    ));
-                }
-            }
         }
         
         return new CArrayDataProvider($result, array(
@@ -268,6 +243,87 @@ class Keyword extends CActiveRecord {
         ));
     }
     
+    private function alexaSearchFull($csvFile) {
+        $result = array();
+        $keyword = explode(' ', $this->name);
+        
+        while (($row = fgetcsv($csvFile))) {
+            $fullCoincidence = true;
+            
+            foreach ($keyword as $k) {
+                if (strpos($row[1], $k) === false) {
+                    $fullCoincidence = false;
+                    
+                    break;
+                }
+            }
+            
+            if ($fullCoincidence) {
+                array_push($result, array(
+                    'id' => 0,
+                    'position' => $row[0],
+                    'domain' => $row[1],
+                ));
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function alexaSearchPartial($csvFile) {
+        $result = array();
+        $keyword = explode(' ', $this->name);
+        
+        while (($row = fgetcsv($csvFile))) {
+            foreach ($keyword as $k) {
+                if (($pos = strpos($row[1], $k)) !== false) {
+                    array_push($result, array(
+                        'id' => 0,
+                        'position' => $row[0],
+                        'domain' => $row[1],
+                    ));
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function alexaSearchCombo($csvFile) {
+        $result = array();
+        $keyword = array();
+        $part = explode(' ', $this->name);
+        $partsCount = count($part);
+
+        if ($partsCount == 1) {
+            $keyword = $part;
+        } else if ($partsCount == 2) {
+            $keyword[] = implode('', $part);
+            $keyword[] = implode('', array(
+                $part[1],
+                $part[0],
+            ));
+        } else {
+            foreach ($this->permutations($part) as $k) {
+                $keyword[] = implode('', $k);
+            }
+        }
+        
+        while (($row = fgetcsv($csvFile))) {
+            foreach ($keyword as $k) {
+                if (($pos = strpos($row[1], $k)) !== false) {
+                    array_push($result, array(
+                        'id' => 0,
+                        'position' => $row[0],
+                        'domain' => $row[1],
+                    ));
+                }
+            }
+        }
+        
+        return $result;
+    }
+
     private function permutations($set) {
         $solutions = array();
         $n = count($set);

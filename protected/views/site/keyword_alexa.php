@@ -8,6 +8,11 @@ $this->pageTitle=Yii::app()->name;
 <div>
     <p>
         Alexa search method:
+    
+        <?= $alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_FULL ? '<b>Full</b>' : CHtml::link('Full', Yii::app()->createUrl('site/keywordAlexa', array(
+            'keywordId' => $keyword->id,
+            'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_FULL,
+        ))) ?>
 
         <?= $alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_COMBO ? '<b>Combo</b>' : CHtml::link('Combo', Yii::app()->createUrl('site/keywordAlexa', array(
             'keywordId' => $keyword->id,
@@ -19,6 +24,11 @@ $this->pageTitle=Yii::app()->name;
             'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_PARTIAL,
         ))) ?>
     </p>
+    <p><i>
+        Full: searches all words from keyword in domain. Like: "watch movie" will be founded in "watchonlinemovie", but not in "watchonline". <br />
+        Combo: searches all combinations of all words from keyword. Like: "watch movie" will be founded in "moviewatch", but not in "watchonlinemovie" <br />
+        Partial: searches at least for 1 of words from keyword. Like: "watch movie" will be founded in "watchonline". <br />
+    </i></p>
 </div>
 
 <div>

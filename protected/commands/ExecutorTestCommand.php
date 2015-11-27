@@ -24,100 +24,134 @@ class ExecutorTestCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
-        $terminated = false;
-        
         $console->writeLine('Initializing');
-        
-//        if (Executor::model()->count() >= Settings::getValue(Settings::SIMULTANEOUS_EXECUTORS_LIMIT)) {
-//            $console->error('Executors limit is reached');
-//            
-//            return;
-//        }
 
         $executor = new Executor();
-        $executor->save();
-        $executorTaskSearchCooldown = Settings::getValue(Settings::EXECUTOR_TASK_SEARCH_COOLDOWN);
-        $executorTaskSearchLimit = Settings::getValue(Settings::EXECUTOR_TASK_SEARCH_LIMIT);
         
-        while (!$terminated) {
-            // Search for task
-            $console->operationStart('Searching for tasks');
-            $executor->setStatus(Executor::STATUS_SEARCHING);
+        // Search for task
+        $console->writeLine('Searching for tasks');
 
-            try {
-                $attempt = 1;
-                
-                while (!$executor->findTask()) {
-                    sleep($executorTaskSearchCooldown);
+        try {
+            if (!$executor->findTask()) {
+                $console->writeLine('No new tasks');
 
-                    $console->operationStep();
-                    
-                    if ($attempt++ > $executorTaskSearchLimit) {
-                        $console->writeLine('No new tasks');
-                        $executor->delete();
-                        
-                        return;
-                    }
-                }
-                
-                $executor->refresh();
-            } catch (Exception $ex) {
-                $executor->keyword->setStatus(Keyword::STATUS_PENDING);
-                $executor->setStatus(Executor::STATUS_ERROR);
-                $console->error($ex->getMessage());
-                $terminated = true;
-
-                continue;
+                return;
             }
+        } catch (Exception $ex) {
+            $console->error($ex->getMessage());
+            
+            return;
+        }
+        
+        $executor->save();
+        
+        // Start check
+        $console->writeLine('Checking keyword "' . $executor->keyword->name . '"');
 
-            $console->operationEnd();
-
-            // Start check
-            $console->writeLine('Checking keyword "' . $executor->keyword->name . '"');
-
-            $executor->keyword->setStatus(Keyword::STATUS_IN_PROGRESS);
-            $executor->setStatus(Executor::STATUS_CHECKING);
-            $googleSearchEngine = new GoogleSearchEngineIt();
-            $googleSearchEngine->search($executor->keyword->name);
-            $sites;
-
-            try {
-                $sites = $googleSearchEngine->getPosition(1, 10);
-            } catch (Exception $ex) {
+        $executor->keyword->setStatus(Keyword::STATUS_IN_PROGRESS);
+        $executor->setStatus(Executor::STATUS_CHECKING);
+        
+        // Select search engine
+        $searchEngine;
+        
+        switch ($executor->keyword->search_engine) {
+            case Keyword::SEARCH_ENGINE_GOOGLE:
+                $searchEngine = new GoogleSearchEngine();
+                break;
+            case Keyword::SEARCH_ENGINE_GOOGLE_ES:
+                $searchEngine = new GoogleSearchEngineEs();
+                break;
+            case Keyword::SEARCH_ENGINE_GOOGLE_IT:
+                $searchEngine = new GoogleSearchEngineIt();
+                break;
+            case Keyword::SEARCH_ENGINE_GOOGLE_FR:
+                $searchEngine = new GoogleSearchEngineFr();
+                break;
+            case Keyword::SEARCH_ENGINE_BING:
+                $searchEngine = new BingSearchEngine();
+                break;
+            default:
+                $errorMessage = 'Unknown search engine: ' . $executor->keyword->search_engine;
                 $executor->keyword->setStatus(Keyword::STATUS_PENDING);
                 $executor->status = Executor::STATUS_ERROR;
-                $executor->message = $ex->getMessage();
+                $executor->message = $errorMessage;
                 $executor->update();
-                $console->error($ex->getMessage());
-                $terminated = true;
+                $console->error($errorMessage);
 
-                continue;
-            }
+                return;
+        }
+        $console->debug('test');
+        
+        $console->writeLine('Using ' . $searchEngine->getSearchEngine() . ' search engine');
+        
+        $console->debug('search');
+        $searchEngine->search($executor->keyword->name);
+        $console->debug('OK');
+        
+        $console->debug('Sites');
+        $sites;
+        $console->debug('OK');
 
-            // Save results
-            $console->progressStart('Saving results', count($sites));
-
-            foreach ($sites as $s) {
-                $console->progressStep();
-
-                $s->keyword_id = $executor->keyword_id;
-                $s->save();
-            }
-
-            $console->progressEnd();
+        $console->debug('beforeTry');
+        try {
+            $console->debug('inTry');
+            $sites = $searchEngine->getPosition(1, 10);
+        } catch (Exception $ex) {
+            $console->debug('catched!');
+            $executor->keyword->setStatus(Keyword::STATUS_PENDING);
+            $executor->status = Executor::STATUS_ERROR;
+            $executor->message = $ex->getMessage();
+            $executor->update();
+            $console->error($ex->getMessage());
             
-            $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
-            $executor->setStatus(Executor::STATUS_PENDING);
+            return;
         }
+        $console->debug('afterTry');
         
-        if ($executor->status == Executor::STATUS_ERROR) {
-            $executor->setStatus(Executor::STATUS_COOLDOWN);
-            sleep(Settings::getValue(Settings::ABUSE_COOLDOWN));
-        }
-        
-        $executor->delete();
-        $console->writeLine('Execution terminated');
-        
+        $executor->stop();
+//        
+//        // Mark previous results as deleted
+//        $previousSiteCriteria = new CDbCriteria();
+//        $previousSiteCriteria->alias = 'site';
+//        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
+//        $previousSiteCriteria->params = array(
+//            ':keyword_id' => $executor->keyword_id,
+//        );
+//        $previousSiteCriteria->order = 'site.executor_id DESC';
+//        $previousSiteCriteria->limit = 1;
+//        
+//        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+//            Site::model()->updateAll(array(
+//                'deleted_at' => date(Time::FORMAT_STANDART),
+//            ), 'executor_id = :executor_id', array(
+//                ':executor_id' => $previousSite->executor_id,
+//            ));
+//        }
+//
+//        // Save new results
+//        $console->progressStart('Saving results', count($sites));
+//
+//        foreach ($sites as $s) {
+//            $console->progressStep();
+//
+//            $s->keyword_id = $executor->keyword_id;
+//            $s->executor_id = $executor->id;
+//            $s->save();
+//        }
+//
+//        $console->progressEnd();
+//
+//        $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
+//        $executor->setStatus(Executor::STATUS_PENDING);
+//        
+//        if ($executor->status == Executor::STATUS_ERROR) {
+//            $executor->setStatus(Executor::STATUS_COOLDOWN);
+//            sleep(Settings::getValue(Settings::ABUSE_COOLDOWN));
+//        }
+//        
+//        $executor->stop();
+//        $console->writeLine('Execution terminated');
+//        
         return;
     }
 }

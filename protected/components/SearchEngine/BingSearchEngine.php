@@ -33,12 +33,18 @@ class BingSearchEngine extends ASearchEngine {
     }
 
     public function getPosition($from = 1, $count = 1) {
+        $console = Console::getInstance();
+        $console->debug('OK');
         $this->pageNumber = ceil($from / $this->positionsPerPage);
         
         if ($count < 1) {
             return false;
         } elseif ($count == 1) {
+            $console->debug('pageResults');
             $pageResults = $this->getPageResults();
+            $console->debug('OK');
+            CVarDumper::dump('DONE', 10, false);
+            die('Debug Point' . PHP_EOL);
             
             $site = new Site();
             $site->name = 'test';

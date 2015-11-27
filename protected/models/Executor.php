@@ -187,6 +187,10 @@ class Executor extends CActiveRecord {
     }
     
     public function stop() {
+        if ($this->keyword->status == Keyword::STATUS_IN_PROGRESS) {
+            $this->keyword->setStatus(Keyword::STATUS_PENDING);
+        }
+        
         $this->status = Executor::STATUS_DONE;
         $this->deleted_at = date(Time::FORMAT_STANDART);
         $this->update();

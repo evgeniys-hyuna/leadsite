@@ -38,8 +38,33 @@
                 <div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
             </div><!-- header -->
 
-            <div id="mainmenu">
-                <?php
+            <?php
+            $action = Yii::app()->getController()->getAction()->id;
+            ?>
+            
+            <ul class="nav nav-pills">
+                <li role="presentation" <?= in_array($action, array(
+                    'index',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Leads', Yii::app()->createUrl('/site/index')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
+                    'keywords', 
+                    'keywordDetails', 
+                    'keywordAlexa',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Keywords', Yii::app()->createUrl('/site/keywords')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
+                    'reports', 
+                    'reportsBrowse',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Reports', Yii::app()->createUrl('/site/reports')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
+                    'ignoreList',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Ignore List', Yii::app()->createUrl('/site/ignoreList')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
+                    'statistics',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Dev', Yii::app()->createUrl('/site/statistics')) ?></li>
+            </ul>
+            
+<!--            <div id="mainmenu">
+                </?php
                 $this->widget('zii.widgets.CMenu', array(
                     'items' => array(
                         array('label' => 'Leads', 'url' => array('/site/index')),
@@ -54,13 +79,14 @@
                     ),
                 ));
                 ?>
-            </div><!-- mainmenu -->
+            </div> mainmenu -->
             <?php if (isset($this->breadcrumbs)): ?>
-                <?php
-                $this->widget('zii.widgets.CBreadcrumbs', array(
-                    'links' => $this->breadcrumbs,
-                ));
-                ?><!-- breadcrumbs -->
+
+            <?php
+            $this->widget('zii.widgets.CBreadcrumbs', array(
+                'links' => $this->breadcrumbs,
+            ));
+            ?><!-- breadcrumbs -->
 <?php endif ?>
 
 <?php echo $content; ?>

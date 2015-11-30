@@ -220,5 +220,13 @@ class Executor extends CActiveRecord {
         
         return $activeSearchEngines;
     }
+    
+    public function deleteResults() {
+        Site::model()->deleteAll('executor_id = :executor_id', array(
+            'executor_id' => $this->id,
+        ));
+        
+        $this->delete();
+    }
 
 }

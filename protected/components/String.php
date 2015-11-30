@@ -426,9 +426,9 @@ class String {
         if (!$attribute) {
             return false;
         }
-
+        
         foreach ($elements as $e) {
-            if ($e->getAttribute($attribute) == substr($selector, 1)) {
+            if (strpos($e->getAttribute($attribute), substr($selector, 1)) !== false) {
                 $result[] = $dom->saveHTML($e);
             }
         }
@@ -436,7 +436,7 @@ class String {
         return $result;
     }
     
-    public static function getTagContent($string, $tag) {
+    public static function getTagContent($string, $tag, $strip = true) {
         $pattern = String::build('/<{tag}.*>.*<\/{tag}.*>/', array(
             'tag' => $tag,
         ));
@@ -444,7 +444,7 @@ class String {
         preg_match($pattern, $string, $match);
         
         if (!empty($match[0])) {
-            return strip_tags($match[0]);
+            return $strip ? strip_tags($match[0]) : $match[0];
         }
         
         return false;

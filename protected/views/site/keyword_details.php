@@ -54,7 +54,7 @@ $this->pageTitle=Yii::app()->name;
         
         <?= CHtml::activeDropDownList($keyword, 'search_engine', array(
             Keyword::SEARCH_ENGINE_BING => Keyword::SEARCH_ENGINE_BING,
-//            Keyword::SEARCH_ENGINE_YAHOO => Keyword::SEARCH_ENGINE_YAHOO,
+            Keyword::SEARCH_ENGINE_YAHOO => Keyword::SEARCH_ENGINE_YAHOO,
             Keyword::SEARCH_ENGINE_GOOGLE => Keyword::SEARCH_ENGINE_GOOGLE,
             Keyword::SEARCH_ENGINE_GOOGLE_ES => Keyword::SEARCH_ENGINE_GOOGLE_ES,
             Keyword::SEARCH_ENGINE_GOOGLE_IT => Keyword::SEARCH_ENGINE_GOOGLE_IT,

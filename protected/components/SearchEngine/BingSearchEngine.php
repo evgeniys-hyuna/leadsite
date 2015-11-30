@@ -28,42 +28,33 @@ class BingSearchEngine extends ASearchEngine {
         $this->pageHtml = file_get_contents(Yii::app()->basePath . '/reports/pagehtml.html');
 //        file_put_contents(Yii::app()->basePath . '/reports/pagehtml.html', $this->pageHtml);
         
-        $results = String::getTags('li', '.b_algo', $this->pageHtml);
+        $results = String::getTagsBySelector('li', '.b_algo', $this->pageHtml);
+        $sites = array();
         
-        CVarDumper::dump($results, 10, FALSE);
-        die('Debug Point' . PHP_EOL);
+        for ($i = 0; $i < count($results); $i++) {
+            $site = new Site();
+            $site->name = String::getTagContent($results[$i], 'h2');
+            $site->position = $i + 1;
+            $site->domain = String::rebuildUrl(String::getTagContent($results[$i], 'cite'), false, false, true, false);
+            $site->link = String::getTagAttribute($results[$i], 'a', 'href');
+            
+            $sites[] = $site;
+        }
+        
+        return $sites;
     }
 
     public function getPosition($from = 1, $count = 1) {
         $this->pageNumber = ceil($from / $this->positionsPerPage);
+        $pageResults = $this->getPageResults();
         
         if ($count < 1) {
             return false;
         } elseif ($count == 1) {
-            $pageResults = $this->getPageResults();
-            
-            $site = new Site();
-            $site->name = 'test';
-            $site->position = 0;
-            $site->link = 'http://domain.com';
-
-            return $site;
+            return !empty($pageResults[$from - 1]) ? $pageResults[$from - 1] : false;
         }
         
-        $sites = array();
-        $pageResults = $this->getPageResults();
-        return false;
-
-        for ($i = 0; $i < $count; $i++) {
-            $site = new Site();
-            $site->name = 'test';
-            $site->position = 0;
-            $site->link = 'http://domain.com';
-
-            $sites[] = $site;
-        }
-
-        return $sites;
+        return $pageResults;
     }
 
 }

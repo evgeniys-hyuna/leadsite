@@ -30,7 +30,13 @@ class ExecutorTestCommand extends CConsoleCommand {
         
         $se = new BingSearchEngine();
         $se->search('');
-        $se->getPosition(1, 10);
+        $sites = $se->getPosition(1, 10);
+        
+        foreach ($sites as $s) {
+            CVarDumper::dump($s->attributes, 10, false);
+        }
+        
+        
         CVarDumper::dump('TEST ENDED', 10, false);
         die('Debug Point' . PHP_EOL);
         

@@ -404,7 +404,7 @@ class String {
         return self::cleanTags($dom->saveHTML());
     }
     
-    public static function getTags($tag, $selector, $string) {
+    public static function getTagsBySelector($tag, $selector, $string) {
         $dom = new DOMDocument();
         
         libxml_use_internal_errors(true);
@@ -412,6 +412,7 @@ class String {
         
         $elements = $dom->getElementsByTagName($tag);
         $attribute = false;
+        $result = array();
 
         switch ($selector[0]) {
             case '.':
@@ -428,13 +429,40 @@ class String {
 
         foreach ($elements as $e) {
             if ($e->getAttribute($attribute) == substr($selector, 1)) {
-//                $e->parentNode->removeChild($e);
-                CVarDumper::dump($dom->saveHTML($e), 10, FALSE);
-                die('Debug Point xml' . PHP_EOL);
+                $result[] = $dom->saveHTML($e);
             }
         }
 
-        return self::cleanTags($dom->saveHTML());
+        return $result;
+    }
+    
+    public static function getTagContent($string, $tag) {
+        $pattern = String::build('/<{tag}.*>.*<\/{tag}.*>/', array(
+            'tag' => $tag,
+        ));
+        $match = array();
+        preg_match($pattern, $string, $match);
+        
+        if (!empty($match[0])) {
+            return strip_tags($match[0]);
+        }
+        
+        return false;
+    }
+    
+    public static function getTagAttribute($string, $tag, $attribute) {
+        $pattern = String::build('/<{tag}.*{attribute}=["\']?((?:.(?!["\']?\s+(?:\S+)=|[>"\']))+.)["\']?/', array(
+            'tag' => $tag,
+            'attribute' => $attribute,
+        ));
+        $match = array();
+        preg_match($pattern, $string, $match);
+        
+        if (!empty($match[1])) {
+            return strip_tags($match[1]);
+        }
+        
+        return false;
     }
     
     /**

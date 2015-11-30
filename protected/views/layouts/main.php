@@ -50,7 +50,6 @@
                         array('label' => 'Keywords', 'url' => array('/site/keywords')),
                         array('label' => 'Reports', 'url' => array('/site/reports')),
                         array('label' => 'Ignore List', 'url' => array('/site/ignoreList')),
-                        array('label' => 'Settings', 'url' => array('/site/settings')),
                         array('label' => 'Dev', 'url' => array('/site/statistics')),
                     ),
                 ));

@@ -75,7 +75,6 @@ class BingSearchEngine extends ASearchEngine {
         } while ($sitesCount < $count);
         
         $console->operationEnd();
-        CVarDumper::dump($this->response, 10, false);
         
         return array_slice($sites, 0, $count);
     }

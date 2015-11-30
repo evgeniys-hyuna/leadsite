@@ -76,7 +76,9 @@ $this->pageTitle=Yii::app()->name;
     'keywordId' => $keyword->id,
 ))) ?>
 
-<?= CHtml::link('Alexa', Yii::app()->createUrl('site/keywordAlexa', array(
+<br /><br /><br />
+
+<?= CHtml::link('Search this keyword on ALEXA top 1 million', Yii::app()->createUrl('site/keywordAlexa', array(
     'keywordId' => $keyword->id,
 ))) ?>
 

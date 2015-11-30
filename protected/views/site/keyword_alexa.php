@@ -5,6 +5,10 @@ $this->pageTitle=Yii::app()->name;
 <h1>Keyword ALEXA</h1>
 <h3><?= $keyword->name ?></h3>
 
+<p><?= CHtml::link('<< Back', Yii::app()->createUrl('site/keywordDetails', array(
+    'keywordId' => $keyword->id,
+))) ?></p>
+
 <div>
     <p>
         Alexa search method:

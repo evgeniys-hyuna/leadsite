@@ -12,22 +12,28 @@ $this->pageTitle=Yii::app()->name;
             
             <div>
                 <p>
-                    Alexa search method:
-
-                    <?= $alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_FULL ? '<b>Full</b>' : CHtml::link('Full', Yii::app()->createUrl('site/keywordAlexa', array(
-                        'keywordId' => $keyword->id,
-                        'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_FULL,
-                    ))) ?>
-
-                    <?= $alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_COMBO ? '<b>Combo</b>' : CHtml::link('Combo', Yii::app()->createUrl('site/keywordAlexa', array(
-                        'keywordId' => $keyword->id,
-                        'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_COMBO,
-                    ))) ?>
-
-                    <?= $alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_PARTIAL ? '<b>Partial</b>' : CHtml::link('Partial', Yii::app()->createUrl('site/keywordAlexa', array(
-                        'keywordId' => $keyword->id,
-                        'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_PARTIAL,
-                    ))) ?>
+                    ALEXA search method:
+                    
+                    <div class="btn-group">
+                        <?= CHtml::link('Full', Yii::app()->createUrl('site/keywordAlexa', array(
+                            'keywordId' => $keyword->id,
+                            'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_FULL,
+                        )), array(
+                            'class' => ($alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_FULL ? 'btn btn-info' : 'btn btn-default'),
+                        )) ?>
+                        <?= CHtml::link('Combo', Yii::app()->createUrl('site/keywordAlexa', array(
+                            'keywordId' => $keyword->id,
+                            'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_COMBO,
+                        )), array(
+                            'class' => ($alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_COMBO ? 'btn btn-info' : 'btn btn-default'),
+                        )) ?>
+                        <?= CHtml::link('Partial', Yii::app()->createUrl('site/keywordAlexa', array(
+                            'keywordId' => $keyword->id,
+                            'alexaSearchMethod' => Keyword::ALEXA_SEARCH_METHOD_PARTIAL,
+                        )), array(
+                            'class' => ($alexaSearchMethod == Keyword::ALEXA_SEARCH_METHOD_PARTIAL ? 'btn btn-info' : 'btn btn-default'),
+                        )) ?>
+                    </div>
                 </p>
                 <p><i>
                     <p>Full: searches all words from keyword in domain. Like: "watch movie" will be founded in "watchonlinemovie", but not in "watchonline".</p>

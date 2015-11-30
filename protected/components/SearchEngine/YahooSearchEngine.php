@@ -4,7 +4,7 @@
  * <evgeniy.siderka@hyuna.bb>
  */
 
-class BingSearchEngine extends ASearchEngine {
+class YahooSearchEngine extends ASearchEngine {
     
     public function __construct() {
         $this->positionsPerPage = 10;
@@ -12,11 +12,11 @@ class BingSearchEngine extends ASearchEngine {
     }
     
     public function getSearchEngine() {
-        return Keyword::SEARCH_ENGINE_BING;
+        return Keyword::SEARCH_ENGINE_YAHOO;
     }
 
     protected function getUrl() {
-        return String::build('http://www.bing.com/search?q={query}&first={startPosition}', array(
+        return String::build('https://search.yahoo.com/search?p={query}&ei=UTF-8&fr=yfp-t-901&fp=1&b=11&pz=10&bct=0&pstart={startPosition}', array(
             'query' => urlencode(str_replace(' ', '+', $this->query)),
             'startPosition' => ($this->pageNumber > 0 ? $this->pageNumber * $this->positionsPerPage : '0'),
         ));
@@ -25,15 +25,15 @@ class BingSearchEngine extends ASearchEngine {
     public function getPageResults() {
         $this->fetch();
         
-        $results = String::getTagsBySelector('li', '.b_algo', $this->pageHtml);
+        $results = String::getTagsBySelector('div', '.dd algo', $this->pageHtml);
         $sites = array();
         
         for ($i = 0; $i < count($results); $i++) {
             $site = new Site();
-            $site->name = String::getTagContent($results[$i], 'h2');
+            $site->name = String::build(String::getTagContent($results[$i], 'h3'));
             $site->position = $i + 1;
-            $site->domain = String::rebuildUrl(String::getTagContent($results[$i], 'cite'), false, false, true, false);
-            $site->link = String::getTagAttribute($results[$i], 'a', 'href');
+            $site->domain = String::rebuildUrl(String::getTagContent($results[$i], 'span'), false, false, true, false);
+            $site->link = String::getTagAttribute(String::getTagContent($results[$i], 'h3', false), 'a', 'href');
             
             $sites[] = $site;
         }

@@ -70,6 +70,9 @@ class ExecutorCommand extends CConsoleCommand {
             case Keyword::SEARCH_ENGINE_GOOGLE_FR:
                 $searchEngine = new GoogleSearchEngineFr();
                 break;
+            case Keyword::SEARCH_ENGINE_YAHOO:
+                $searchEngine = new YahooSearchEngine();
+                break;
             default:
                 $errorMessage = 'Unknown search engine: ' . $executor->keyword->search_engine;
                 $executor->keyword->setStatus(Keyword::STATUS_PENDING);

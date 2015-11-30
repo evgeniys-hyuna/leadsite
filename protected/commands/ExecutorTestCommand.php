@@ -28,8 +28,8 @@ class ExecutorTestCommand extends CConsoleCommand {
         
         
         
-        $se = new BingSearchEngine();
-        $se->search('');
+        $se = new YahooSearchEngine();
+        $se->search('watch movie online');
         $sites = $se->getPosition(1, 10);
         
         foreach ($sites as $s) {

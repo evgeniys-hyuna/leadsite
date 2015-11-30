@@ -55,6 +55,9 @@ class ExecutorCommand extends CConsoleCommand {
         $searchEngine;
         
         switch ($executor->keyword->search_engine) {
+            case Keyword::SEARCH_ENGINE_BING:
+                $searchEngine = new BingSearchEngine();
+                break;
             case Keyword::SEARCH_ENGINE_GOOGLE:
                 $searchEngine = new GoogleSearchEngine();
                 break;
@@ -128,10 +131,10 @@ class ExecutorCommand extends CConsoleCommand {
         $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
         $executor->setStatus(Executor::STATUS_PENDING);
         
-        if ($executor->status == Executor::STATUS_ERROR) {
-            $executor->setStatus(Executor::STATUS_COOLDOWN);
-            sleep(Settings::getValue(Settings::ABUSE_COOLDOWN));
-        }
+//        if ($executor->status == Executor::STATUS_ERROR) {
+//            $executor->setStatus(Executor::STATUS_COOLDOWN);
+//            sleep(Settings::getValue(Settings::ABUSE_COOLDOWN));
+//        }
         
         $executor->stop();
         $console->writeLine('Execution terminated');

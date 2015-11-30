@@ -35,6 +35,8 @@ abstract class ASearchEngine {
     public abstract function getPosition($from = 1, $to = 30);
     
     protected function fetch($userAgent = null, $cookie = null, $referrer = null, Proxy $proxy = null) {
+        sleep($this->cooldown);
+        
         $ch = curl_init();
         
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
@@ -73,6 +75,14 @@ abstract class ASearchEngine {
         $this->response = curl_getinfo($ch);
         
         curl_close($ch);
+        
+        if ($this->response['http_code'] != 200) {
+            throw new Exception(String::build('Can\'t fetch results from {search_engine}. Response status: {status} ({details})', array(
+                'search_engine' => $this->getSearchEngine(),
+                'status' => $this->response['http_code'],
+                'details' => print_r($this->response, true),
+            )));
+        }
         
 //        $this->pageHtml = file_get_contents(Yii::app()->getBasePath() . '/reports/test.html');
 //        $this->response = 200;

@@ -23,10 +23,7 @@ class BingSearchEngine extends ASearchEngine {
     }
 
     public function getPageResults() {
-        Console::writeLine('fetching');
-//        $this->fetch();
-        $this->pageHtml = file_get_contents(Yii::app()->basePath . '/reports/pagehtml.html');
-//        file_put_contents(Yii::app()->basePath . '/reports/pagehtml.html', $this->pageHtml);
+        $this->fetch();
         
         $results = String::getTagsBySelector('li', '.b_algo', $this->pageHtml);
         $sites = array();
@@ -45,16 +42,42 @@ class BingSearchEngine extends ASearchEngine {
     }
 
     public function getPosition($from = 1, $count = 1) {
+        $console = Console::getInstance();
+        $console->operationStart('Collecting search results');
         $this->pageNumber = ceil($from / $this->positionsPerPage);
-        $pageResults = $this->getPageResults();
+        $sites = array();
         
-        if ($count < 1) {
+        if ($count < 1 ||
+                $count > 10) {
+            $console->operationEnd();
+            $console-error('Count must be in 1-10. ' . $count . ' is setted');
+            
             return false;
-        } elseif ($count == 1) {
-            return !empty($pageResults[$from - 1]) ? $pageResults[$from - 1] : false;
         }
+
+        do {
+            $console->operationStep();
+            $pageResults = $this->getPageResults();
+            
+            foreach ($pageResults as $pr) {
+                $sitesCount = count($sites);
+                
+                if (IgnoreList::isInList($pr->domain) ||
+                        ($sitesCount &&
+                        $sites[$sitesCount - 1]->domain == $pr->domain)) {
+                    continue;
+                }
+                
+                $sites[] = $pr;
+            }
+            
+            $this->pageNumber++;
+        } while ($sitesCount < $count);
         
-        return $pageResults;
+        $console->operationEnd();
+        CVarDumper::dump($this->response, 10, false);
+        
+        return array_slice($sites, 0, $count);
     }
 
 }

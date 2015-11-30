@@ -203,7 +203,7 @@ class Keyword extends CActiveRecord {
         return new CActiveDataProvider('Executor', array(
             'criteria' => $criteria,
             'pagination' => array(
-                'pageSize' => 20,
+                'pageSize' => 5,
             ),
         ));
     }

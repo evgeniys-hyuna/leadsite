@@ -159,9 +159,11 @@ class SiteController extends Controller {
     
     public function actionStatistics() {
         $executor = new Executor();
+        $settings = new Settings();
         
         $this->render('statistics', array(
             'executor' => $executor,
+            'settings' => $settings,
         ));
     }
     
@@ -233,14 +235,6 @@ class SiteController extends Controller {
                     'pageSize' => 50,
                 ),
             )),
-        ));
-    }
-    
-    public function actionSettings() {
-        $settings = new Settings();
-        
-        $this->render('settings', array(
-            'settings' => $settings,
         ));
     }
     

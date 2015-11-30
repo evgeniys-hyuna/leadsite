@@ -2519,3 +2519,40 @@ Stack trace:
 #4 /var/www/html/leadsite/protected/yiic.php(7): require_once()
 #5 /var/www/html/leadsite/protected/yiic(4): require_once()
 
+2015/11/30 09:21:01 [error] [php] Array to string conversion (/var/www/html/leadsite/protected/components/SearchEngine/BingSearchEngine.php:31)
+Stack trace:
+#0 unknown(0): ExecutorTestCommand->actionIndex()
+#1 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#2 /var/www/html/framework/console/CConsoleCommandRunner.php(71): ExecutorTestCommand->run()
+#3 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#4 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#5 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#6 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#7 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/30 09:41:51 [error] [php] DOMDocument::loadHTML(): htmlParseStartTag: misplaced <head> tag in Entity, line: 3 (/var/www/html/leadsite/protected/components/String.php:409)
+Stack trace:
+#0 /var/www/html/leadsite/protected/components/SearchEngine/BingSearchEngine.php(54): BingSearchEngine->getPageResults()
+#1 /var/www/html/leadsite/protected/commands/ExecutorTestCommand.php(33): BingSearchEngine->getPosition()
+#2 unknown(0): ExecutorTestCommand->actionIndex()
+#3 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#4 /var/www/html/framework/console/CConsoleCommandRunner.php(71): ExecutorTestCommand->run()
+#5 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#6 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#7 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#8 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#9 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/11/30 09:53:21 [error] [php] Argument 1 passed to iterator_to_array() must implement interface Traversable, instance of DOMElement given, called in /var/www/html/leadsite/protected/components/SearchEngine/BingSearchEngine.php on line 31 and defined (/var/www/html/leadsite/protected/components/String.php:432)
+Stack trace:
+#0 /var/www/html/leadsite/protected/components/SearchEngine/BingSearchEngine.php(54): BingSearchEngine->getPageResults()
+#1 /var/www/html/leadsite/protected/commands/ExecutorTestCommand.php(33): BingSearchEngine->getPosition()
+#2 unknown(0): ExecutorTestCommand->actionIndex()
+#3 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#4 /var/www/html/framework/console/CConsoleCommandRunner.php(71): ExecutorTestCommand->run()
+#5 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#6 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#7 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#8 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#9 /var/www/html/leadsite/protected/yiic(4): require_once()
+

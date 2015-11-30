@@ -24,27 +24,23 @@ class BingSearchEngine extends ASearchEngine {
 
     public function getPageResults() {
         Console::writeLine('fetching');
-        $this->fetch();
+//        $this->fetch();
+        $this->pageHtml = file_get_contents(Yii::app()->basePath . '/reports/pagehtml.html');
+//        file_put_contents(Yii::app()->basePath . '/reports/pagehtml.html', $this->pageHtml);
         
-        file_put_contents(Yii::app()->basePath . '/reports/pagehtml.html', $this->pageHtml);
+        $results = String::getTags('li', '.b_algo', $this->pageHtml);
         
-        CVarDumper::dump($this->response, 10, false);
-        die('Debug Point');
+        CVarDumper::dump($results, 10, FALSE);
+        die('Debug Point' . PHP_EOL);
     }
 
     public function getPosition($from = 1, $count = 1) {
-        $console = Console::getInstance();
-        $console->debug('OK');
         $this->pageNumber = ceil($from / $this->positionsPerPage);
         
         if ($count < 1) {
             return false;
         } elseif ($count == 1) {
-            $console->debug('pageResults');
             $pageResults = $this->getPageResults();
-            $console->debug('OK');
-            CVarDumper::dump('DONE', 10, false);
-            die('Debug Point' . PHP_EOL);
             
             $site = new Site();
             $site->name = 'test';
@@ -54,20 +50,20 @@ class BingSearchEngine extends ASearchEngine {
             return $site;
         }
         
+        $sites = array();
+        $pageResults = $this->getPageResults();
         return false;
-        
-//        $sites = array();
-//
-//        for ($i = 0; $i < $count; $i++) {
-//            $site = new Site();
-//            $site->name = 'test';
-//            $site->position = 0;
-//            $site->link = 'http://domain.com';
-//
-//            $sites[] = $site;
-//        }
-//
-//        return $sites;
+
+        for ($i = 0; $i < $count; $i++) {
+            $site = new Site();
+            $site->name = 'test';
+            $site->position = 0;
+            $site->link = 'http://domain.com';
+
+            $sites[] = $site;
+        }
+
+        return $sites;
     }
 
 }

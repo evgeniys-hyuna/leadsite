@@ -25,6 +25,18 @@ class ExecutorTestCommand extends CConsoleCommand {
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
         $console->writeLine('Initializing');
+        
+        
+        
+        $se = new BingSearchEngine();
+        $se->search('');
+        $se->getPosition(1, 10);
+        CVarDumper::dump('TEST ENDED', 10, false);
+        die('Debug Point' . PHP_EOL);
+        
+        
+        
+        
 
         $executor = new Executor();
         
@@ -80,24 +92,15 @@ class ExecutorTestCommand extends CConsoleCommand {
 
                 return;
         }
-        $console->debug('test');
         
         $console->writeLine('Using ' . $searchEngine->getSearchEngine() . ' search engine');
         
-        $console->debug('search');
         $searchEngine->search($executor->keyword->name);
-        $console->debug('OK');
-        
-        $console->debug('Sites');
         $sites;
-        $console->debug('OK');
 
-        $console->debug('beforeTry');
         try {
-            $console->debug('inTry');
             $sites = $searchEngine->getPosition(1, 10);
         } catch (Exception $ex) {
-            $console->debug('catched!');
             $executor->keyword->setStatus(Keyword::STATUS_PENDING);
             $executor->status = Executor::STATUS_ERROR;
             $executor->message = $ex->getMessage();
@@ -106,7 +109,6 @@ class ExecutorTestCommand extends CConsoleCommand {
             
             return;
         }
-        $console->debug('afterTry');
         
         $executor->stop();
 //        

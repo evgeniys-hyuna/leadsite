@@ -403,7 +403,40 @@ class String {
 
         return self::cleanTags($dom->saveHTML());
     }
+    
+    public static function getTags($tag, $selector, $string) {
+        $dom = new DOMDocument();
+        
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'utf-8'));
+        
+        $elements = $dom->getElementsByTagName($tag);
+        $attribute = false;
 
+        switch ($selector[0]) {
+            case '.':
+                $attribute = 'class';
+                break;
+            case '#':
+                $attribute = 'id';
+                break;
+        }
+
+        if (!$attribute) {
+            return false;
+        }
+
+        foreach ($elements as $e) {
+            if ($e->getAttribute($attribute) == substr($selector, 1)) {
+//                $e->parentNode->removeChild($e);
+                CVarDumper::dump($dom->saveHTML($e), 10, FALSE);
+                die('Debug Point xml' . PHP_EOL);
+            }
+        }
+
+        return self::cleanTags($dom->saveHTML());
+    }
+    
     /**
      * Search and close opened HTML tags
      * @param string $string HTML text

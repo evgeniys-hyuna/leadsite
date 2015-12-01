@@ -3082,3 +3082,28 @@ REQUEST_URI=/leadsite/index.php?r=site/keywordAlexa&keywordId=139
 in /var/www/html/leadsite/protected/views/site/keyword_alexa/search_method.php (9)
 in /var/www/html/leadsite/protected/views/site/keyword_alexa.php (15)
 in /var/www/html/leadsite/protected/controllers/SiteController.php (157)
+2015/12/01 14:12:03 [error] [php] Undefined variable: executor (/var/www/html/leadsite/protected/models/Site.php:198)
+Stack trace:
+#0 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#1 /var/www/html/framework/console/CConsoleCommandRunner.php(71): ExecutorCommand->run()
+#2 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#3 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#4 /var/www/html/framework/yiic.php(33): CConsoleApplication->run()
+#5 /var/www/html/leadsite/protected/yiic.php(7): require_once()
+#6 /var/www/html/leadsite/protected/yiic(4): require_once()
+
+2015/12/01 15:18:46 [error] [exception.CException] exception 'CException' with message 'Executor and its behaviors do not have a method or closure named "dalete".' in /var/www/html/framework/base/CComponent.php:266
+Stack trace:
+#0 /var/www/html/framework/db/ar/CActiveRecord.php(227): CComponent->__call('dalete', Array)
+#1 /var/www/html/leadsite/protected/commands/ExecutorCommand.php(149): CActiveRecord->__call('dalete', Array)
+#2 /var/www/html/leadsite/protected/commands/ExecutorCommand.php(149): Executor->dalete()
+#3 [internal function]: ExecutorCommand->actionIndex(false, false)
+#4 /var/www/html/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(ExecutorCommand), Array)
+#5 /var/www/html/framework/console/CConsoleCommandRunner.php(71): CConsoleCommand->run(Array)
+#6 /var/www/html/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run(Array)
+#7 /var/www/html/framework/base/CApplication.php(184): CConsoleApplication->processRequest()
+#8 /var/www/html/framework/yiic.php(33): CApplication->run()
+#9 /var/www/html/leadsite/protected/yiic.php(7): require_once('/var/www/html/f...')
+#10 /var/www/html/leadsite/protected/yiic(4): require_once('/var/www/html/l...')
+#11 {main}
+---

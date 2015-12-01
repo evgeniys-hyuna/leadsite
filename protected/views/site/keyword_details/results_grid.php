@@ -36,7 +36,7 @@
                     $result .= "$s->position. $s->domain <br />";
                 }
 
-                return strlen($result) > 0 ? $result : 'No results';
+                return strlen($result) > 0 ? $result : '<i>Empty</i>';
             },
         ),
     ),

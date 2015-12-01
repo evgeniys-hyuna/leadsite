@@ -170,5 +170,60 @@ class Site extends CActiveRecord {
             ),
         ));
     }
+    
+    public static function deleteLastResults($keywordId) {
+        $previousSiteCriteria = new CDbCriteria();
+        $previousSiteCriteria->alias = 'site';
+        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
+        $previousSiteCriteria->params = array(
+            ':keyword_id' => $keywordId,
+        );
+        $previousSiteCriteria->order = 'site.executor_id DESC';
+        $previousSiteCriteria->limit = 1;
+        
+        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+            Site::model()->updateAll(array(
+                'deleted_at' => date(Time::FORMAT_STANDART),
+            ), 'executor_id = :executor_id', array(
+                ':executor_id' => $previousSite->executor_id,
+            ));
+        }
+    }
+    
+    public static function getLastResults($keywordId) {
+        $previousSiteCriteria = new CDbCriteria();
+        $previousSiteCriteria->alias = 'site';
+        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
+        $previousSiteCriteria->params = array(
+            ':keyword_id' => $keywordId,
+        );
+        $previousSiteCriteria->order = 'site.executor_id DESC';
+        $previousSiteCriteria->limit = 1;
+        
+        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+            
+            return Site::model()->findAll('executor_id = :executor_id', array(
+                ':executor_id' => $previousSite->executor_id,
+            ));
+        }
+        
+        return false;
+    }
+    
+    public static function isDifferent($sitesLeft, $sitesRight) {
+        $sitesLeftCount = count($sitesLeft);
+        
+        if ($sitesLeftCount != count($sitesRight)) {
+            return true;
+        }
+        
+        for ($i = 0; $i < $sitesLeftCount; $i++) {
+            if ($sitesLeft[$i]->domain != $sitesRight[$i]->domain) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
 }

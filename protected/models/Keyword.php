@@ -269,6 +269,10 @@ class Keyword extends CActiveRecord {
         $html .= '<table>';
         
         foreach ($result as $r) {
+            if (IgnoreList::isInList($r['domain'])) {
+                continue;
+            }
+            
             $html .= String::build('<tr><td>{position}</td><td>{domain}</td></tr>', array(
                 'position' => $r['position'],
                 'domain' => $r['domain'],

@@ -159,7 +159,7 @@ class Report extends CActiveRecord {
         $keyword = Keyword::model()->findAll();
         
         foreach ($keyword as $k) {
-            $reportHtml .= 'Keyword: ' . $k->name . '<br />';
+            $reportHtml .= '<p>Keyword: ' . $k->name . '</p><br />';
             $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
         }
         

@@ -54,3 +54,11 @@
 
     <?= CHtml::endForm() ?>
 </div>
+
+<script type="text/javascript">
+
+$("#ddlPeriod").change(function () {
+    $("#txfPeriod").val($(this).val());
+});
+
+</script>

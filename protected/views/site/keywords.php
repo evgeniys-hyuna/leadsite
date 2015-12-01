@@ -29,11 +29,3 @@ $this->pageTitle=Yii::app()->name;
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-
-$("#ddlPeriod").change(function () {
-    $("#txfPeriod").val($(this).val());
-});
-
-</script>

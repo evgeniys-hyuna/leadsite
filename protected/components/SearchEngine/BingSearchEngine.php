@@ -31,7 +31,6 @@ class BingSearchEngine extends ASearchEngine {
         for ($i = 0; $i < count($results); $i++) {
             $site = new Site();
             $site->name = String::getTagContent($results[$i], 'h2');
-            $site->position = $i + 1;
             $site->domain = String::rebuildUrl(String::getTagContent($results[$i], 'cite'), false, false, true, false);
             $site->link = String::getTagAttribute($results[$i], 'a', 'href');
             

@@ -39,7 +39,6 @@ class GoogleSearchEngine extends ASearchEngine {
         }
         
         $sites = array();
-        $position = 1;
         
         do {
             $console->operationStep();
@@ -57,7 +56,6 @@ class GoogleSearchEngine extends ASearchEngine {
                 
                 $site = new Site();
                 $site->name = strip_tags($pr->title);
-                $site->position = $position++;
                 $site->link = $pr->url;
                 $site->domain = $domain;
 

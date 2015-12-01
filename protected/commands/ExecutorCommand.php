@@ -120,10 +120,12 @@ class ExecutorCommand extends CConsoleCommand {
 
         // Save new results
         $console->progressStart('Saving results', count($sites));
+        $position = 1;
 
         foreach ($sites as $s) {
             $console->progressStep();
 
+            $s->position = $position++;
             $s->keyword_id = $executor->keyword_id;
             $s->executor_id = $executor->id;
             $s->save();
@@ -132,7 +134,7 @@ class ExecutorCommand extends CConsoleCommand {
         $console->progressEnd();
 
         $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
-        $executor->setStatus(Executor::STATUS_PENDING);
+//        $executor->setStatus(Executor::STATUS_PENDING);
         
 //        if ($executor->status == Executor::STATUS_ERROR) {
 //            $executor->setStatus(Executor::STATUS_COOLDOWN);

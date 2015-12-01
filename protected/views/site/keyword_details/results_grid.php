@@ -3,15 +3,8 @@
     'dataProvider' => $keyword->allReports(),
     'columns' => array(
         array(
-            'name' => 'created_at',
-            'header' => 'Begin',
-            'value' => function ($e) {
-                return Time::toPretty($e->created_at);
-            },
-        ),
-        array(
             'name' => 'updated_at',
-            'header' => 'End',
+            'header' => 'Checked On',
             'value' => function ($e) {
                 return Time::toPretty($e->updated_at);
             },

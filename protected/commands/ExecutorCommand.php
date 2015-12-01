@@ -101,45 +101,55 @@ class ExecutorCommand extends CConsoleCommand {
         }
         
         // Mark previous results as deleted
-        $previousSiteCriteria = new CDbCriteria();
-        $previousSiteCriteria->alias = 'site';
-        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
-        $previousSiteCriteria->params = array(
-            ':keyword_id' => $executor->keyword_id,
-        );
-        $previousSiteCriteria->order = 'site.executor_id DESC';
-        $previousSiteCriteria->limit = 1;
-        
-        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
-            Site::model()->updateAll(array(
-                'deleted_at' => date(Time::FORMAT_STANDART),
-            ), 'executor_id = :executor_id', array(
-                ':executor_id' => $previousSite->executor_id,
-            ));
-        }
-
-        // Save new results
-        $console->progressStart('Saving results', count($sites));
-
-        foreach ($sites as $s) {
-            $console->progressStep();
-
-            $s->keyword_id = $executor->keyword_id;
-            $s->executor_id = $executor->id;
-            $s->save();
-        }
-
-        $console->progressEnd();
-
-        $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
-        $executor->setStatus(Executor::STATUS_PENDING);
-        
-//        if ($executor->status == Executor::STATUS_ERROR) {
-//            $executor->setStatus(Executor::STATUS_COOLDOWN);
-//            sleep(Settings::getValue(Settings::ABUSE_COOLDOWN));
+//        $previousSiteCriteria = new CDbCriteria();
+//        $previousSiteCriteria->alias = 'site';
+//        $previousSiteCriteria->addCondition('site.keyword_id = :keyword_id');
+//        $previousSiteCriteria->params = array(
+//            ':keyword_id' => $executor->keyword_id,
+//        );
+//        $previousSiteCriteria->order = 'site.executor_id DESC';
+//        $previousSiteCriteria->limit = 1;
+//        
+//        if (($previousSite = Site::model()->find($previousSiteCriteria))) {
+//            Site::model()->updateAll(array(
+//                'deleted_at' => date(Time::FORMAT_STANDART),
+//            ), 'executor_id = :executor_id', array(
+//                ':executor_id' => $previousSite->executor_id,
+//            ));
 //        }
         
-        $executor->stop();
+        $lastResults = Site::getLastResults($executor->keyword_id);
+        
+        if (!$lastResults ||
+                ($lastResults &&
+                Site::isDifferent($sites, $lastResults))) {
+            Site::deleteLastResults($executor->keyword_id);
+            
+            // Save new results
+            $console->progressStart('Saving results', count($sites));
+            $position = 1;
+
+            foreach ($sites as $s) {
+                $console->progressStep();
+
+                $s->position = $position++;
+                $s->keyword_id = $executor->keyword_id;
+                $s->executor_id = $executor->id;
+                $s->save();
+            }
+
+            $console->progressEnd();
+            $executor->stop();
+        } else {
+            $console->writeLine('Same results');
+            Executor::model()->updateByPk($lastResults[0]->executor_id, array(
+                'updated_at' => date(Time::FORMAT_STANDART),
+            ));
+            $executor->stop(Executor::STATUS_DONE, 'Same Results');
+            $executor->delete();
+        }
+
+        $executor->keyword->setStatus(Keyword::STATUS_CHECKED);
         $console->writeLine('Execution terminated');
         
         return;

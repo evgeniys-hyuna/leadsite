@@ -31,7 +31,6 @@ class YahooSearchEngine extends ASearchEngine {
         for ($i = 0; $i < count($results); $i++) {
             $site = new Site();
             $site->name = String::build(String::getTagContent($results[$i], 'h3'));
-            $site->position = $i + 1;
             $site->domain = String::rebuildUrl(String::getTagContent($results[$i], 'span'), false, false, true, false);
             $site->link = String::getTagAttribute(String::getTagContent($results[$i], 'h3', false), 'a', 'href');
             

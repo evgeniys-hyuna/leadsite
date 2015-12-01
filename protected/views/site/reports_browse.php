@@ -10,23 +10,8 @@ $this->pageTitle=Yii::app()->name;
             <h3 class="panel-title">Browse Reports</h3>
         </div>
         <div class="panel-body">
-            <?php $this->widget('zii.widgets.grid.CGridView', array(
+            <?= $this->renderPartial(Yii::app()->params['siteView'] . 'reports_browse.reports_grid', array(
                 'dataProvider' => $dataProvider,
-                'htmlOptions' => array(
-                    'class' => 'table',
-                ),
-                'columns' => array(
-                    array(
-                        'name' => 'name',
-                        'header' => false,
-                        'type' => 'raw',
-                        'value' => function ($e) {
-                            return CHtml::link($e['name'], Yii::app()->createUrl('site/download', array(
-                                'filename' => $e['name'],
-                            )));
-                        },
-                    ),
-                ),
             )) ?>
         </div>
     </div>

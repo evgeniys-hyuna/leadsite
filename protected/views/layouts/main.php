@@ -59,8 +59,8 @@
                     'ignoreList',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Ignore List', Yii::app()->createUrl('/site/ignoreList')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
-                    'statistics',
-                )) ? 'class="active"' : '' ?>><?= CHtml::link('Dev', Yii::app()->createUrl('/site/statistics')) ?></li>
+                    'dev',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Dev', Yii::app()->createUrl('/site/dev')) ?></li>
             </ul>
             
 <!--            <div id="mainmenu">

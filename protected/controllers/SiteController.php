@@ -157,11 +157,11 @@ class SiteController extends Controller {
         ));
     }
     
-    public function actionStatistics() {
+    public function actionDev() {
         $executor = new Executor();
         $settings = new Settings();
         
-        $this->render('statistics', array(
+        $this->render('dev', array(
             'executor' => $executor,
             'settings' => $settings,
         ));

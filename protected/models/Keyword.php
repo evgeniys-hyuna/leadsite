@@ -243,6 +243,47 @@ class Keyword extends CActiveRecord {
         ));
     }
     
+    public function alexaToHtml($alexaSearchMethod) {
+        $csvFile;
+        $result;
+        $html = '';
+        
+        if (!($csvFile = fopen(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv', 'r'))) {
+            return false;
+        }
+        
+        switch ($alexaSearchMethod) {
+            case self::ALEXA_SEARCH_METHOD_FULL:
+                $result = $this->alexaSearchFull($csvFile);
+                break;
+            case self::ALEXA_SEARCH_METHOD_PARTIAL:
+                $result = $this->alexaSearchPartial($csvFile);
+                break;
+            case self::ALEXA_SEARCH_METHOD_COMBO:
+                $result = $this->alexaSearchCombo($csvFile);
+                break;
+            default:
+                throw new Exception('Unknown search method ' . $alexaSearchMethod);
+        }
+        
+        $html .= '<table>';
+        
+        foreach ($result as $r) {
+            if (IgnoreList::isInList($r['domain'])) {
+                continue;
+            }
+            
+            $html .= String::build('<tr><td>{position}</td><td>{domain}</td></tr>', array(
+                'position' => $r['position'],
+                'domain' => $r['domain'],
+            ));
+        }
+        
+        $html .= '</table>';
+        
+        return $html;
+    }
+    
     private function alexaSearchFull($csvFile) {
         $result = array();
         $keyword = explode(' ', $this->name);

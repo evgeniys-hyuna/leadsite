@@ -115,8 +115,13 @@ class Report extends CActiveRecord {
         return parent::beforeSave();
     }
     
-    public function generate() {
+    public function generate($leads = true, $alexa = true) {
         $reportHtml = '';
+        
+        // Leads
+        
+        $reportHtml .= '<h3>Leads</h3>';
+        
         $criteria = new CDbCriteria();
         $criteria->alias = 'site';
         $criteria->addCondition('site.deleted_at IS NULL');
@@ -145,7 +150,22 @@ class Report extends CActiveRecord {
             $reportHtml .= $row;
         }
         
-        $reportHtml .= '</table><p><i>Report generated on ' . date(Time::FORMAT_PRETTY) . '</i></p>';
+        $reportHtml .= '</table>';
+        
+        // Alexa
+        
+        $reportHtml .= '<h3>Alexa</h3>';
+        
+        $keyword = Keyword::model()->findAll();
+        
+        foreach ($keyword as $k) {
+            $reportHtml .= '<p>Keyword: ' . $k->name . '</p><br />';
+            $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
+        }
+        
+        // Stamp
+        
+        $reportHtml .= '<p><i>Report generated on ' . date(Time::FORMAT_PRETTY) . '</i></p>';
         
         return $reportHtml;
     }

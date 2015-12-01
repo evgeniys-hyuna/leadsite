@@ -65,6 +65,10 @@ $this->pageTitle=Yii::app()->name;
             <h3 class="panel-title">Reports</h3>
         </div>
         <div class="panel-body">
+            <div id="alertSendNow" class="alert alert-info" style="display: none;">
+                Report generating may take a while. Please, be patient...
+            </div>
+            
             <div>
                 <?php $this->widget('zii.widgets.grid.CGridView', array(
                     'id' => 'grvKeywords',
@@ -108,6 +112,7 @@ $this->pageTitle=Yii::app()->name;
                                         'reportId' => $e->id,
                                     )), array(
                                         'class' => 'btn-sm btn-info',
+                                        'onclick' => 'btnSendNowClick(this)',
                                     )) . '&nbsp;';
                                 }
 
@@ -132,5 +137,9 @@ $this->pageTitle=Yii::app()->name;
 $("#ddlPeriod").change(function () {
     $("#txfPeriod").val($(this).val());
 });
+
+function btnSendNowClick (sender) {
+    $("#alertSendNow").show(300);
+}
 
 </script>

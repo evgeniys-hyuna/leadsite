@@ -201,7 +201,13 @@ class Executor extends CActiveRecord {
     }
     
     public static function getActiveSearchEngines() {
-        $currentExecutors = Executor::model()->findAll('deleted_at IS NULL');
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('deleted_at IS NULL');
+        $criteria->addNotInCondition('status', array(
+            Executor::STATUS_CHECKING,
+            Executor::STATUS_COOLDOWN,
+        ));
+        $currentExecutors = Executor::model()->findAll($criteria);
         $activeSearchEngines = array();
         
         foreach ($currentExecutors as $e) {

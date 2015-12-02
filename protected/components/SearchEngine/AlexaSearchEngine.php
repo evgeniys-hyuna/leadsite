@@ -43,10 +43,15 @@ class GoogleSearchEngine extends ASearchEngine {
         
         $sites = array();
         $position = 1;
+        $sitesCount = count($sites);
         
         do {
             $console->operationStep();
             $pageResults = $this->getPageResults();
+            
+            if (count($pageResults) <= 0) {
+                throw new Exception('No page results fetched');
+            }
             
             foreach ($pageResults as $pr) {
                 $sitesCount = count($sites);

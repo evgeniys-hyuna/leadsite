@@ -37,7 +37,7 @@ class YahooSearchEngine extends ASearchEngine {
             $sites[] = $site;
         }
         
-        return $sites;
+        return count($sites) > 0 ? $sites : false;
     }
 
     public function getPosition($from = 1, $count = 1) {
@@ -53,10 +53,16 @@ class YahooSearchEngine extends ASearchEngine {
             
             return false;
         }
+        
+        $sitesCount = count($sites);
 
         do {
             $console->operationStep();
             $pageResults = $this->getPageResults();
+            
+            if (!$pageResults) {
+                throw new Exception('No page results fetched');
+            }
             
             foreach ($pageResults as $pr) {
                 $sitesCount = count($sites);

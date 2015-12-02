@@ -1,4 +1,5 @@
 <?php
+
 $status = array(
     'tasks' => array(
         'total' => Executor::model()->count(),
@@ -7,6 +8,7 @@ $status = array(
     'pending' => Keyword::model()->count('status = \'' . Keyword::STATUS_PENDING . '\''),
     'alexa' => filemtime(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv'),
 );
+
 ?>
 
 <ul class="list-group">

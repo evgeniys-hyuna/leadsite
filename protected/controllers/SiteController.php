@@ -171,7 +171,7 @@ class SiteController extends Controller {
         $executor = Executor::model()->findByPk($executorId);
         $executor->stop();
         
-        $this->redirect(Yii::app()->createUrl('site/statistics'));
+        $this->redirect(Yii::app()->createUrl('site/dev'));
     }
     
     public function actionReports() {

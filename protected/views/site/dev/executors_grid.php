@@ -1,4 +1,6 @@
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php
+
+$this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'grvKeywords',
     'dataProvider' => $executor->searchActive(),
     'htmlOptions' => array(),
@@ -14,7 +16,7 @@
             'name' => 'keyword_id',
             'header' => 'Keyword',
             'value' => function ($e) {
-                return String::build('{keyword_id}: {keyword}', array(
+                return String::build('{keyword} ({keyword_id})', array(
                     'keyword' => $e->keyword->name,
                     'keyword_id' => $e->keyword_id,
                 ));
@@ -66,4 +68,4 @@
             }
         ),
     ),
-)) ?>
+));

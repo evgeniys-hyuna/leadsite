@@ -203,7 +203,7 @@ class Executor extends CActiveRecord {
     public static function getActiveSearchEngines() {
         $criteria = new CDbCriteria();
         $criteria->addCondition('deleted_at IS NULL');
-        $criteria->addNotInCondition('status', array(
+        $criteria->addInCondition('status', array(
             Executor::STATUS_CHECKING,
             Executor::STATUS_COOLDOWN,
         ));

@@ -276,12 +276,14 @@ class SiteController extends Controller {
             }
             
             foreach ($domains as $d) {
-                if (strlen($d) <= 0) {
+                $domain = String::rebuildUrl($d, false, false, true, false);
+                
+                if (strlen($domain) <= 0) {
                     continue;
                 }
                 
                 $newIgnoreList = new IgnoreList();
-                $newIgnoreList->domain = $d;
+                $newIgnoreList->domain = $domain;
                 
                 if (!$newIgnoreList->save()) {
                     throw new Exception(print_r($newIgnoreList->getErrors(), true));

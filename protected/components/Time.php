@@ -19,11 +19,16 @@ class Time {
     
     const FORMAT_STANDART = 'Y-m-d H:i:s';
     const FORMAT_PRETTY = 'd M Y H:i';
-	const FORMAT_FULL = 'j F, Y H:i';
+    const FORMAT_FULL = 'j F, Y H:i';
     const FORMAT_DATE = 'Y-m-d';
+    const FORMAT_DATE_PRETTY = 'd M Y';
     const FORMAT_TIME = 'H:i:s';
     
     public static function toPretty($dateString) {
         return date(self::FORMAT_PRETTY, strtotime($dateString));
+    }
+    
+    public static function toFormat($format, $dateString) {
+        return date($format, strtotime($dateString));
     }
 }

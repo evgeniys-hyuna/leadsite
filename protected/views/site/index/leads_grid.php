@@ -26,7 +26,7 @@
                         'search_engine' => $e->keyword->search_engine,
                         'position' => $e->position,
                     )),
-                ), Time::toPretty($e->created_at));
+                ), Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->created_at));
             }
         ),
     ),

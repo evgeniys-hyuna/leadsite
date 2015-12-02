@@ -32,6 +32,7 @@ class KeywordServiceCommand extends CConsoleCommand {
         
         Keyword::model()->updateAll(array(
             'status' => Keyword::STATUS_PENDING,
+            'updated_at' => date(Time::FORMAT_STANDART),
         ), $criteria);
         
         $console->writeLine('Fixing InProgress...');

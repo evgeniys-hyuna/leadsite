@@ -32,8 +32,8 @@
             'value' => function ($e) {
                 return CHtml::tag('span', array(
                     'title' => String::build('Last Check: {last_check} Next Check: {next_check}', array(
-                        'last_check' => Time::toPretty($e->checked_at),
-                        'next_check' => $e->period ? date(Time::FORMAT_PRETTY, strtotime($e->checked_at) + $e->period) : 'No autocheck',
+                        'last_check' => Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->checked_at),
+                        'next_check' => $e->period ? date(Time::FORMAT_DATE_PRETTY, strtotime($e->checked_at) + $e->period) : 'No autocheck',
                     )),
                 ), ucwords($e->status));
             },

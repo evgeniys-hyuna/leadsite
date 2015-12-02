@@ -6,7 +6,6 @@
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id' => 'grvKeywords',
         'dataProvider' => $report->search(),
-        'filter' => $report,
         'htmlOptions' => array(),
         'columns' => array(
             array(
@@ -16,7 +15,7 @@
                 'value' => function ($e) {
                     return String::build('<span title="Added on {created_at}">{email}</span>', array(
                         'email' => $e->email,
-                        'created_at' => Time::toPretty($e->created_at),
+                        'created_at' => Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->created_at),
                     ));
                 },
             ),
@@ -25,13 +24,13 @@
                 'header' => 'Last Update',
                 'filter' => false,
                 'value' => function ($e) {
-                    return Time::toPretty($e->last_send_at);
+                    return Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->last_send_at);
                 },
             ),
             array(
                 'header' => 'Next Update',
                 'value' => function ($e) {
-                    return date(Time::FORMAT_PRETTY, (strtotime($e->last_send_at) + $e->period));
+                    return date(Time::FORMAT_DATE_PRETTY, (strtotime($e->last_send_at) + $e->period));
                 },
             ),
             array(

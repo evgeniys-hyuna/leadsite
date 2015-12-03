@@ -319,6 +319,10 @@ class Keyword extends CActiveRecord {
         
         while (($row = fgetcsv($csvFile))) {
             foreach ($keyword as $k) {
+                if (strlen($k) < 3) {
+                    continue;
+                }
+                
                 if (($pos = strpos($row[1], $k)) !== false) {
                     array_push($result, array(
                         'id' => 0,

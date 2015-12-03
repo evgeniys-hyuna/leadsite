@@ -22,9 +22,9 @@
         )) ?>
     </div>
 
-    <p><i>
-        <p>Full: searches all words from keyword in domain. Like: "watch movie" will be founded in "watchonlinemovie", but not in "watchonline".</p>
-        <p>Combo: searches all combinations of all words from keyword. Like: "watch movie" will be founded in "moviewatch", but not in "watchonlinemovie"</p>
-        <p>Partial: searches at least for 1 of words from keyword. Like: "watch movie" will be founded in "watchonline".</p>
-    </i></p>
+    <p><i>Full: searches all words from keyword in domain. Like: "watch movie" will be founded in "watchonlinemovie", but not in "watchonline".</i></p>
+    <p><i>Combo: searches all combinations of all words from keyword. Like: "watch movie" will be founded in "moviewatch", but not in "watchonlinemovie"</i></p>
+    <p><i>Partial: searches at least for 1 of words from keyword. Like: "watch movie" will be founded in "watchonline".</i></p>
+    <div class="alert alert-info"><p><b>Note.</b> Words with less than 3 characters will be excluded from the partial search.</p></div>
+    
 </div>

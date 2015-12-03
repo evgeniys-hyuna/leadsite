@@ -174,11 +174,33 @@ class Report extends CActiveRecord {
         return $reportHtml;
     }
     
-    public function send() {
+    public function send($generateNew = false) {
         $reportHtml;
         
-        if (!($reportHtml = $this->generate())) {
-            return false;
+        if ($generateNew) {
+            if (!($reportHtml = $this->generate())) {
+                return false;
+            }
+        } else {
+            $files = scandir(Yii::app()->basePath . '/reports');
+            $latestModificationTime = 0;
+            $latestReport = false;
+            
+            foreach ($files as $f) {
+                if (($modificationTime = strtotime(filemtime(Yii::app()->basePath . '/reports/' . $f))) > $latestModificationTime) {
+                    $latestModificationTime = $modificationTime;
+                    $latestReport = $f;
+                }
+            }
+            
+            if ($latestReport) {
+                $reportHtml = file_get_contents(Yii::app()->basePath . '/reports/' . $latestReport);
+            } else {
+                return false;
+            }
+            
+            CVarDumper::dump($latestReport, 10, true);
+            die('Debug Point' . PHP_EOL);
         }
         
         $title = Yii::app()->name . ' Report';
@@ -194,7 +216,9 @@ class Report extends CActiveRecord {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
 
-            file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
+            if ($generateNew) {
+                file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
+            }
         } else {
             throw new Exception('Can\'t send report to ' . $this->email);
         }

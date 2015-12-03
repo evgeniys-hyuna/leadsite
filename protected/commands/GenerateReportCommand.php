@@ -90,6 +90,7 @@ class GenerateReportCommand extends CConsoleCommand {
         
         foreach ($keyword as $k) {
             $console->progressStep();
+            $console->debug($k->name);
             
             $reportHtml = '<p>Keyword: ' . $k->name . '</p><br />';
             $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);

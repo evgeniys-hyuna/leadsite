@@ -187,7 +187,11 @@ class Report extends CActiveRecord {
             $latestReport = false;
             
             foreach ($files as $f) {
-                if (($modificationTime = strtotime(filemtime(Yii::app()->basePath . '/reports/' . $f))) > $latestModificationTime) {
+                if (in_array($f, array('.', '..'))) {
+                    continue;
+                }
+                
+                if (($modificationTime = filemtime(Yii::app()->basePath . '/reports/' . $f)) > $latestModificationTime) {
                     $latestModificationTime = $modificationTime;
                     $latestReport = $f;
                 }
@@ -198,9 +202,6 @@ class Report extends CActiveRecord {
             } else {
                 return false;
             }
-            
-            CVarDumper::dump($latestReport, 10, true);
-            die('Debug Point' . PHP_EOL);
         }
         
         $title = Yii::app()->name . ' Report';

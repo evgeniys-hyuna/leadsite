@@ -146,7 +146,11 @@ class Site extends CActiveRecord {
     public function searchLeads() {
         $criteria = new CDbCriteria();
         $criteria->alias = 'site';
+        $criteria->with = array(
+            'keyword',
+        );
         $criteria->addCondition('site.deleted_at IS NULL');
+        $criteria->addCondition('keyword.deleted_at IS NULL');
         $criteria->group = 'site.domain';
         $criteria->distinct = true;
         $sites = Site::model()->findAll($criteria);

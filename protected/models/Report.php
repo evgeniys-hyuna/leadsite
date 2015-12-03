@@ -124,7 +124,11 @@ class Report extends CActiveRecord {
         
         $criteria = new CDbCriteria();
         $criteria->alias = 'site';
+        $criteria->with = array(
+            'keyword',
+        );
         $criteria->addCondition('site.deleted_at IS NULL');
+        $criteria->addCondition('keyword.deleted_at IS NULL');
         $criteria->group = 'site.domain';
         $criteria->distinct = true;
         $site = Site::model()->findAll($criteria);

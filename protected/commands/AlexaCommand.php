@@ -27,26 +27,78 @@ class AlexaCommand extends CConsoleCommand {
         $workingDirectory = Yii::app()->basePath . '/../uploads/alexa';
         $zipUrl = 'http://s3.amazonaws.com/alexa-static/top-1m.csv.zip';
         $zipPath = $workingDirectory . '/top-1m.csv.zip';
+        $csvPath = $workingDirectory . '/top-1m.csv';
+        // Split
+        $csvFile = fopen($csvPath, 'r');
+        $partsDirectory = $workingDirectory . '/parts';
+        $partDelimiter = 50000;
+        $part = 0;
+        $partContent = array();
+        $i = 0;
         
-        $console->operationStart('Downloading Alexa Rankings archive');
+//        $console->operationStart('Downloading Alexa Rankings archive');
+//        
+//        if (!File::download($zipUrl, $zipPath)) {
+//            $console->error('Can\'t download file ' . $zipUrl);
+//            
+//            return;
+//        }
+//        
+//        $console->operationEnd();
+//        $console->operationStart('Extracting');
+//        
+//        if (!File::unzip($zipPath, $workingDirectory)) {
+//            $console->error('Can\'t unzip file ' . $zipPath);
+//            
+//            return;
+//        }
+//        
+//        $console->operationEnd();
+//        $console->writeLine('Update completed successfully');
+        $console->operationStart('Preparing and cleaning parts directory');
         
-        if (!File::download($zipUrl, $zipPath)) {
-            $console->error('Can\'t download file ' . $zipUrl);
+        if (!file_exists($partsDirectory)) {
+            mkdir($partsDirectory);
+        }
+        
+        $files = scandir($partsDirectory);
+        
+        foreach ($files as $f) {
+            $console->operationStep();
             
-            return;
+            if (in_array($f, array('.', '..'))) {
+                continue;
+            }
+            
+            unlink($partsDirectory . DIRECTORY_SEPARATOR . $f);
         }
         
         $console->operationEnd();
-        $console->operationStart('Extracting');
+        $console->operationStart('Splitting');
         
-        if (!File::unzip($zipPath, $workingDirectory)) {
-            $console->error('Can\'t unzip file ' . $zipPath);
+        while (($row = fgetcsv($csvFile))) {
+            array_push($partContent, $row);
+
+            if ($i++ >= $partDelimiter - 1) {
+                $console->operationStep();
+                $i = 0;
+                $partPath = $partsDirectory . DIRECTORY_SEPARATOR . ++$part . '.csv';
             
-            return;
+                if (count($partContent) > 0) {
+                    $partFile = fopen($partPath, 'a');
+
+                    foreach ($partContent as $pc) {
+                        fputcsv($partFile, $pc);
+                    }
+
+                    fclose($partFile);
+                    unset($partContent);
+                    $partContent = array();
+                }
+            }
         }
         
         $console->operationEnd();
-        $console->writeLine('Update completed successfully');
         
         return;
     }

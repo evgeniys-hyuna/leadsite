@@ -266,6 +266,8 @@ class Keyword extends CActiveRecord {
                 throw new Exception('Unknown search method ' . $alexaSearchMethod);
         }
         
+        fclose($csvFile);
+        
         $html .= '<table>';
         
         foreach ($result as $r) {

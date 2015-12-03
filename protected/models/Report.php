@@ -200,6 +200,8 @@ class Report extends CActiveRecord {
             if ($latestReport) {
                 $reportHtml = file_get_contents(Yii::app()->basePath . '/reports/' . $latestReport);
             } else {
+                $this->addError('id', 'Can\'t define latest report file');
+                
                 return false;
             }
         }

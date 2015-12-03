@@ -24,7 +24,40 @@ class GenerateReportCommand extends CConsoleCommand {
     
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
+        $reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
+        $currentReportDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m');
+        $currentLeadsReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.html';
+        $currentAlexaReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
+        $alexaTemporaryDirectory = $currentReportDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
+        
+        if (!file_exists($currentReportDirectory)) {
+            mkdir($currentReportDirectory, true);
+        }
+        
+        if (!file_exists($alexaTemporaryDirectory)) {
+            mkdir($alexaTemporaryDirectory, true);
+        }
+        
+        // TODO
+        
+        // search leads
+        
+        // generate report
+        
+        // clear alexa temp directory
+        
+        // generate all keywords alexa
+        
+        // create zip report with updated keywords
+        
+        
+        
+        
+        
+        
+        
         $reportFile = Yii::app()->getBasePath() . '/reports/' . date(Time::FORMAT_STANDART) . '.html';
+        $alexaTempDirectory = Yii::app()->getBasePath() . '/reports/alexa_temp';
         $reportHtml = '';
         
         // Leads
@@ -85,21 +118,90 @@ class GenerateReportCommand extends CConsoleCommand {
         
         $keyword = Keyword::model()->findAll();
         
+        if (!file_exists($alexaTempDirectory)) {
+            mkdir($alexaTempDirectory);
+        }
+        
         $console->operationEnd();
-        $console->progressStart('Searching', count($keyword));
+        $console->operationStart('Cleaning temporary files');
+        
+//        $temporaryFiles = scandir($alexaTempDirectory);
+//        
+//        foreach ($temporaryFiles as $f) {
+//            $console->operationStep();
+//            
+//            if (in_array($f, array('.', '..'))) {
+//                continue;
+//            }
+//            
+//            $path = $alexaTempDirectory . DIRECTORY_SEPARATOR . $f;
+//            
+//            $console->debug('Deleting: ' . $path);
+//            
+//            unlink();
+//        }
+        
+        $console->operationEnd();
+        $console->progressStart('Generating alexa reports', count($keyword));
         
         foreach ($keyword as $k) {
             $console->progressStep();
-            $console->debug($k->name);
-            
-            $reportHtml = '<p>Keyword: ' . $k->name . '</p><br />';
-            $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
-            
-            file_put_contents($reportFile, $reportHtml, FILE_APPEND);
-            unset($reportHtml);
+//            $console->debug($k->name);
+//            
+//            $reportHtml = '<p>Keyword: ' . $k->name . '</p><br />';
+//            $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
+//            
+//            file_put_contents($alexaTempDirectory . DIRECTORY_SEPARATOR . $k->name . '.html', $reportHtml);
+//            
+//            unset($reportHtml);
         }
         
         $console->progressEnd();
+        $console->operationStart('Selecting updated keywords');
+        
+        $updatedKeywords = Yii::app()->db->createCommand()
+                ->select('name')
+                ->from('lds_keyword')
+                ->where('unix_timestamp(created_at) > unix_timestamp(now()) - :period', array(
+                    ':period' => Time::SECONDS_IN_DAY,
+                ))
+                ->orWhere('unix_timestamp(updated_at) > unix_timestamp(now()) - :period', array(
+                    ':period' => Time::SECONDS_IN_DAY,
+                ))
+                ->queryColumn();
+        
+        $console->operationEnd();
+        $console->operationStart('Creating alexa zip achive');
+        
+        $zipPath = Yii::app()->getBasePath() . '/reports/' . date(Time::FORMAT_STANDART) . ' alexa.zip';
+        $zip = new ZipArchive();
+        
+        if (!$zip->open($zipPath, ZipArchive::CREATE)) {
+            die('Can\'t open or create ZIP file' . PHP_EOL);
+        }
+        
+        $console->debug('Searching for files in: ' . $alexaTempDirectory);
+        $files = scandir($alexaTempDirectory);
+        
+        foreach ($files as $f) {
+            $console->operationStep();
+            
+            if (in_array($f, array('.', '..'))) {
+                continue;
+            }
+            
+            if (in_array(substr($f, 0, strpos($f, pathinfo($f, PATHINFO_EXTENSION)) - 1), $updatedKeywords)) {
+                $path = $alexaTempDirectory . DIRECTORY_SEPARATOR . $f;
+                
+                $console->debug('Adding to archive: ' . $path);
+                
+                $zip->addFile($path, $f);
+            }
+        }
+        
+        $zip->close();
+        
+        $console->operationEnd();
         
         // Stamp
         
@@ -112,4 +214,5 @@ class GenerateReportCommand extends CConsoleCommand {
         
         return;
     }
+    
 }

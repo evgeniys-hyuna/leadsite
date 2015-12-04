@@ -265,9 +265,6 @@ class Report extends CActiveRecord {
         $headers .= $content;
         $headers .= "--" . $separator . "--";
         
-        CVarDumper::dump($headers, 10, true);
-        die('Debug Point' . PHP_EOL);
-
         //SEND Mail
         return mail($to, $title, "", $headers);
     }

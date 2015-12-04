@@ -252,20 +252,21 @@ class Report extends CActiveRecord {
         $headers .= "This is a MIME encoded message." . $eol;
 
         // message
-        $headers .= "--" . $separator . $eol;
-        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
-        $headers .= ("Content-Transfer-Encoding: 8bit" . $eol . $body . $eol);
+        $message = "--" . $separator . $eol;
+        $message .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
+        $message .= "Content-Transfer-Encoding: 8bit" . $eol;
+        $message .= $body . $eol;
 
         // attachment
-        $headers .= "--" . $separator . $eol;
-        $headers .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_BASENAME) . "\"" . $eol;
-        $headers .= "Content-Transfer-Encoding: base64" . $eol;
-        $headers .= "Content-Disposition: attachment" . $eol;
-        $headers .= $content;
-        $headers .= "--" . $separator . "--";
+        $message .= "--" . $separator . $eol;
+        $message .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_BASENAME) . "\"" . $eol;
+        $message .= "Content-Transfer-Encoding: base64" . $eol;
+        $message .= "Content-Disposition: attachment" . $eol;
+        $message .= $content;
+        $message .= "--" . $separator . "--";
         
         //SEND Mail
-        return mail($to, $title, $body, $headers);
+        return mail($to, $title, $message, $headers);
     }
 
 }

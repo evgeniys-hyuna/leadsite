@@ -76,6 +76,13 @@ class GenerateReportCommand extends CConsoleCommand {
         
         $this->alexaReport();
         
+        /*
+         * Update settings
+         */
+        
+        Settings::setValue(Settings::LAST_REPORT_LEADS, $this->_currentLeadsReportPath);
+        Settings::setValue(Settings::LAST_REPORT_ALEXA, $this->_currentAlexaReportPath);
+        
         return;
     }
     
@@ -143,7 +150,7 @@ class GenerateReportCommand extends CConsoleCommand {
     }
     
     private function generateAlexaReports() {
-        $keyword = Keyword::model()->findAll();
+        $keyword = Keyword::model()->findAll('deleted_at IS NULL');
         
         $this->_console->progressStart('Generating alexa reports', count($keyword));
         

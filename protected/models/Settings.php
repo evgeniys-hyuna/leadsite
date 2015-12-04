@@ -15,6 +15,8 @@ class Settings extends CActiveRecord {
     const EXECUTOR_TASK_SEARCH_LIMIT = 'Executor task search limit';
     const ABUSE_COOLDOWN = 'Abuse cooldown';
     const ALEXA_SEARCH_COOLDOWN = 5;
+    const LAST_REPORT_LEADS = 'Last report Leads';
+    const LAST_REPORT_ALEXA = 'Last report Alexa';
     
     /**
      * @return string the associated database table name
@@ -96,13 +98,31 @@ class Settings extends CActiveRecord {
     }
     
     public static function getValue($name) {
-        if ($settings = Settings::model()->findByAttributes(array(
+        if (($settings = Settings::model()->findByAttributes(array(
             'name' => $name,
-        ))) {
+        )))) {
             return $settings->value;
         }
         
         throw new Exception('Can\'t get settings by name ' . $name);
+    }
+    
+    public static function setValue($name, $value) {
+        try {
+            Settings::model()->update(array(
+                'value' => $value,
+            ), 'name = :name', array(
+                ':name' => $name,
+            ));
+        } catch (Exception $ex) {
+            $settings = new Settings();
+            $settings->name = $name;
+            $settings->value = $value;
+            
+            if (!$settings->save()) {
+                throw new Exception('Can\'t save settings. ' . print_r($settings->getErrors(), true));
+            }
+        }
     }
 
 }

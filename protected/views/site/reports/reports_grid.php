@@ -1,5 +1,5 @@
 <div id="alertSendNow" class="alert alert-info" style="display: none;">
-    Report generating may take a while. Please, be patient...
+    Sending report. Please wait...
 </div>
 
 <div>
@@ -13,10 +13,17 @@
                 'header' => 'Email',
                 'type' => 'raw',
                 'value' => function ($e) {
-                    return String::build('<span title="Added on {created_at}">{email}</span>', array(
-                        'email' => $e->email,
-                        'created_at' => Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->created_at),
-                    ));
+                    return Chtml::link($e->email, Yii::app()->createUrl('site/reportsDetails', array(
+                        'reportId' => $e->id,
+                    )));
+                },
+            ),
+            array(
+                'name' => 'created_at',
+                'header' => 'Added On',
+                'filter' => false,
+                'value' => function ($e) {
+                    return Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->created_at);
                 },
             ),
             array(
@@ -48,12 +55,6 @@
                         )) . '&nbsp;';
                     }
 
-                    $links .= Chtml::link('Delete', Yii::app()->createUrl('site/reportsDelete', array(
-                        'reportId' => $e->id,
-                    )), array(
-                        'class' => 'btn-sm btn-danger',
-                    ));
-
                     return $links;
                 },
             ),
@@ -63,8 +64,8 @@
 
 <script type="text/javascript">
 
-function btnSendNowClick (sender) {
-    $("#alertSendNow").show(300);
-}
+//function btnSendNowClick (sender) {
+//    $("#alertSendNow").show(100);
+//}
 
 </script>

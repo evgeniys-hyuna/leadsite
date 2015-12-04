@@ -54,6 +54,7 @@
                 <li role="presentation" <?= in_array($action, array(
                     'reports', 
                     'reportsBrowse',
+                    'reportsDetails',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Reports', Yii::app()->createUrl('/site/reports')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
                     'ignoreList',

@@ -207,6 +207,24 @@ class SiteController extends Controller {
         ));
     }
     
+    public function actionReportsDetails($reportId) {
+        $report = Report::model()->findByPk($reportId);
+        
+        if (($postReport = Yii::app()->request->getParam('Report'))) {
+            $report->setAttributes($postReport);
+            
+            if (!$report->save()) {
+                throw new Exception(print_r($report->getErrors(), true));
+            }
+            
+            $this->redirect(Yii::app()->createUrl('site/reports'));
+        }
+        
+        $this->render('report_details', array(
+            'report' => $report,
+        ));
+    }
+    
     public function actionReportsSend($reportId) {
         $report = Report::model()->findByPk($reportId);
         $report->send();

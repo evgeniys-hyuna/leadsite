@@ -196,17 +196,10 @@ class Report extends CActiveRecord {
         $headers = 'From: noreply@ad-center.com' . PHP_EOL;
         $headers .= 'Content-type: text/html' . PHP_EOL;
 
-//        if ($this->email('noreply@ad-center.com', $this->email, $title, $reportHtml, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
-//            $this->last_send_at = date(Time::FORMAT_STANDART);
-//            $this->update();
-//
-//            if ($generateNew) {
-//                file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
-//            }
-//        } else {
-//            throw new Exception('Can\'t send report to ' . $this->email);
-//        }
-        if ($this->sendMail($body, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
+        if ($this->email($reportHtml, array(
+            Settings::getValue(Settings::LAST_REPORT_LEADS),
+            Settings::getValue(Settings::LAST_REPORT_ALEXA),
+        ))) {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
 
@@ -240,48 +233,9 @@ class Report extends CActiveRecord {
         return $reports;
     }
     
-    private function email($from, $to, $title, $body, $attach = false) {
-        $file = $attach;
-        $file_size = filesize($file);
-        $handle = fopen($file, "r");
-        $content = fread($handle, $file_size);
-        fclose($handle);
-        $content = chunk_split(base64_encode($content));
-
-        // a random hash will be necessary to send mixed content
-        $separator = md5(time());
-
-        // carriage return type (we use a PHP end of line constant)
-        $eol = PHP_EOL;
-
-        // main header (multipart mandatory)
-        $headers = "From: " . $from . $eol;
-        $headers .= "MIME-Version: 1.0" . $eol;
-        $headers .= "Content-Type: multipart/mixed; boundary=\"" . $separator . "\"" . $eol;
-        $headers .= "Content-Transfer-Encoding: 7bit" . $eol;
-        $headers .= "This is a MIME encoded message." . $eol;
-
-        // message
-        $message = "--" . $separator . $eol;
-        $message .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
-        $message .= "Content-Transfer-Encoding: 8bit" . $eol;
-        $message .= $body . $eol;
-
-        // attachment
-        $message .= "--" . $separator . $eol;
-        $message .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_BASENAME) . "\"" . $eol;
-        $message .= "Content-Transfer-Encoding: base64" . $eol;
-        $message .= "Content-Disposition: attachment" . $eol;
-        $message .= $content;
-        $message .= "--" . $separator . "--";
-        
-        //SEND Mail
-        return mail($to, $title, $message, $headers);
-    }
-    
-    function mail_attachment($files, $path, $mailto, $from_mail, $from_name, $replyto, $subject, $message, $cc = false, $bcc = false) {
+    private function email($body, $attachments) {
         $uid = md5(uniqid(time()));
-        $header = "From: " . $from_name . " <" . $from_mail . ">\r\n";
+        $header = "From: " . Yii::app()->name . " Report <noreply@ad-center.com>\r\n";
 //        $header .= "Reply-To: " . $replyto . "\r\n";
 //        $header .= "cc : < $cc > \r\n";  // comma saparated emails
 //        $header .= "Bcc :  < $bcc >\r\n"; // comma saparated emails
@@ -291,10 +245,10 @@ class Report extends CActiveRecord {
         $header .= "--" . $uid . "\r\n";
         $header .= "Content-type:text/html; charset=iso-8859-1\r\n";
         $header .= "Content-Transfer-Encoding: 7bit\r\n";
-        $header .= $message . "\r\n";
+        $header .= $body . "\r\n";
 
-        foreach ($files as $filename) {
-            $file = $filename; // path should be document root path.
+        foreach ($attachments as $a) {
+            $file = $a;
             $name = basename($file);
             $file_size = filesize($file);
             $handle = fopen($file, "r");
@@ -303,69 +257,14 @@ class Report extends CActiveRecord {
             $content = chunk_split(base64_encode($content));
 
             $header .= "--" . $uid . "\r\n";
-            $header .= "Content-Type: application/octet-stream; name=\"" . pathinfo($filename, PATHINFO_BASENAME) . "\"\r\n"; // use different content types here
+            $header .= "Content-Type: application/octet-stream; name=\"" . pathinfo($a, PATHINFO_BASENAME) . "\"\r\n"; // use different content types here
             $header .= "Content-Transfer-Encoding: base64\r\n";
-            $header .= "Content-Disposition: attachment; filename=\"" . pathinfo($filename, PATHINFO_BASENAME) . "\"\r\n";
+            $header .= "Content-Disposition: attachment; filename=\"" . pathinfo($a, PATHINFO_BASENAME) . "\"\r\n";
             $header .= $content . "";
         }
         $header .= "--" . $uid . "--";
         
-        return mail($mailto, $subject, "", $header);
+        return mail($this->email, Yii::app()->name . ' Report', "", $header);
     }
     
-    private function sendMail($body, $attachment) {
-        /* Email Detials */
-        $mail_to = $this->email;
-        $from_mail = "noreply@ad-center.com";
-        $from_name = "Report Generator";
-        $reply_to = "noreply@ad-center.com";
-        $subject = "Leads Report";
-        $message = $body;
-
-        /* Attachment File */
-        // Attachment location
-        $file_name = pathinfo($attachment, PATHINFO_BASENAME);
-        $path = pathinfo($attachment, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR;
-
-        // Read the file content
-        $file = $path . $file_name;
-        $file_size = filesize($file);
-        $handle = fopen($file, "r");
-        $content = fread($handle, $file_size);
-        fclose($handle);
-        $content = chunk_split(base64_encode($content));
-
-        /* Set the email header */
-        // Generate a boundary
-        $boundary = md5(uniqid(time()));
-
-        // Email header
-        $header = "From: " . $from_name . " <" . $from_mail . ">" . PHP_EOL;
-        $header .= "Reply-To: " . $reply_to . PHP_EOL;
-        $header .= "MIME-Version: 1.0" . PHP_EOL;
-
-        // Multipart wraps the Email Content and Attachment
-        $header .= "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"" . PHP_EOL;
-        $header .= "This is a multi-part message in MIME format." . PHP_EOL;
-        $header .= "--" . $boundary . PHP_EOL;
-
-        // Email content
-        // Content-type can be text/plain or text/html
-        $header .= "Content-type:text/plain; charset=iso-8859-1" . PHP_EOL;
-        $header .= "Content-Transfer-Encoding: 7bit" . PHP_EOL;
-        $header .= "$message" . PHP_EOL;
-        $header .= "--" . $boundary . PHP_EOL;
-
-        // Attachment
-        // Edit content type for different file extensions
-        $header .= "Content-Type: application/xml; name=\"" . $file_name . "\"" . PHP_EOL;
-        $header .= "Content-Transfer-Encoding: base64" . PHP_EOL;
-        $header .= "Content-Disposition: attachment; filename=\"" . $file_name . "\"" . PHP_EOL;
-        $header .= $content;
-        $header .= "--" . $boundary . "--";
-
-        // Send email
-        return mail($mail_to, $subject, "", $header);
-    }
-
 }

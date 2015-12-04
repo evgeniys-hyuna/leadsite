@@ -220,8 +220,21 @@ class SiteController extends Controller {
         $this->redirect(Yii::app()->createUrl('site/reports'));
     }
     
-    public function actionReportsBrowse() {
-        $reports = Report::browse();
+    public function actionReportsBrowse($directory = false) {
+        $reportsDirectory = Yii::app()->basePath . DIRECTORY_SEPARATOR . 'reports';
+        
+        if (!$directory ||
+                strpos($directory, $reportsDirectory) === false) {
+            $directory = $reportsDirectory;
+        }
+        
+        if (!is_dir($directory)) {
+            $this->redirect(Yii::app()->createUrl('site/download', array(
+                'filePath' => $directory,
+            )));
+        }
+        
+        $reports = Report::browse($directory);
         
         $this->render('reports_browse', array(
             'dataProvider' => new CArrayDataProvider($reports, array(
@@ -235,6 +248,7 @@ class SiteController extends Controller {
                     'pageSize' => 50,
                 ),
             )),
+            'currentDirectory' => $directory,
         ));
     }
     
@@ -304,11 +318,9 @@ class SiteController extends Controller {
         $this->redirect(Yii::app()->createUrl('site/ignoreList'));
     }
     
-    public function actionDownload($filename) {
-        $filepath = Yii::app()->basePath . '/reports/' . $filename;
-        
-        if (file_exists($filepath)) {
-            Yii::app()->request->sendFile($filename, file_get_contents($filepath));
+    public function actionDownload($filePath) {
+        if (file_exists($filePath)) {
+            Yii::app()->request->sendFile($filePath, file_get_contents($filePath));
         } else {
             $this->render('site/reports');
         }

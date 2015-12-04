@@ -8,9 +8,9 @@
             'name' => 'name',
             'header' => false,
             'type' => 'raw',
-            'value' => function ($e) {
-                return CHtml::link($e['name'], Yii::app()->createUrl('site/download', array(
-                    'filename' => $e['name'],
+            'value' => function ($e) use ($currentDirectory) {
+                return CHtml::link($e['name'], Yii::app()->createUrl('site/reportsBrowse', array(
+                    'directory' => $currentDirectory . DIRECTORY_SEPARATOR . $e['name'],
                 )));
             },
         ),

@@ -215,8 +215,12 @@ class Report extends CActiveRecord {
         return (strtotime($this->last_send_at) + $this->period) <= time();
     }
     
-    public static function browse() {
-        $files = scandir(Yii::app()->basePath . '/reports/');
+    public static function browse($directory = false) {
+        if (!$directory) {
+            $directory = Yii::app()->basePath . '/reports/';
+        }
+        
+        $files = scandir($directory);
         $reports = array();
         
         foreach ($files as $f) {

@@ -196,7 +196,17 @@ class Report extends CActiveRecord {
         $headers = 'From: noreply@ad-center.com' . PHP_EOL;
         $headers .= 'Content-type: text/html' . PHP_EOL;
 
-        if ($this->email('noreply@ad-center.com', $this->email, $title, $reportHtml, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
+//        if ($this->email('noreply@ad-center.com', $this->email, $title, $reportHtml, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
+//            $this->last_send_at = date(Time::FORMAT_STANDART);
+//            $this->update();
+//
+//            if ($generateNew) {
+//                file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
+//            }
+//        } else {
+//            throw new Exception('Can\'t send report to ' . $this->email);
+//        }
+        if ($this->mail_attachment(array(Settings::getValue(Settings::LAST_REPORT_ALEXA)), false, $this->email, 'noreply@ad-center.com', 'noreply', '', 'Report', $body)) {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
 
@@ -267,6 +277,40 @@ class Report extends CActiveRecord {
         
         //SEND Mail
         return mail($to, $title, $message, $headers);
+    }
+    
+    function mail_attachment($files, $path, $mailto, $from_mail, $from_name, $replyto, $subject, $message, $cc = false, $bcc = false) {
+        $uid = md5(uniqid(time()));
+        $header = "From: " . $from_name . " <" . $from_mail . ">\r\n";
+//        $header .= "Reply-To: " . $replyto . "\r\n";
+//        $header .= "cc : < $cc > \r\n";  // comma saparated emails
+//        $header .= "Bcc :  < $bcc >\r\n"; // comma saparated emails
+        $header .= "MIME-Version: 1.0\r\n";
+        $header .= "Content-Type: multipart/mixed; boundary=\"" . $uid . "\"\r\n";
+        $header .= "This is a multi-part message in MIME format.\r\n";
+        $header .= "--" . $uid . "\r\n";
+        $header .= "Content-type:text/html; charset=iso-8859-1\r\n";
+        $header .= "Content-Transfer-Encoding: 7bit\r\n";
+        $header .= $message . "\r\n";
+
+        foreach ($files as $filename) {
+            $file = $filename; // path should be document root path.
+            $name = basename($file);
+            $file_size = filesize($file);
+            $handle = fopen($file, "r");
+            $content = fread($handle, $file_size);
+            fclose($handle);
+            $content = chunk_split(base64_encode($content));
+
+            $header .= "--" . $uid . "\r\n";
+            $header .= "Content-Type: application/octet-stream; name=\"" . pathinfo($filename, PATHINFO_BASENAME) . "\"\r\n"; // use different content types here
+            $header .= "Content-Transfer-Encoding: base64\r\n";
+            $header .= "Content-Disposition: attachment; filename=\"" . pathinfo($filename, PATHINFO_BASENAME) . "\"\r\n";
+            $header .= $content . "";
+        }
+        $header .= "--" . $uid . "--";
+        
+        return mail($mailto, $subject, "", $header);
     }
 
 }

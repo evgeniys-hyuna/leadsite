@@ -182,28 +182,30 @@ class Report extends CActiveRecord {
                 return false;
             }
         } else {
-            $files = scandir(Yii::app()->basePath . '/reports');
-            $latestModificationTime = 0;
-            $latestReport = false;
+//            $files = scandir(Yii::app()->basePath . '/reports');
+//            $latestModificationTime = 0;
+//            $latestReport = false;
+//            
+//            foreach ($files as $f) {
+//                if (in_array($f, array('.', '..'))) {
+//                    continue;
+//                }
+//                
+//                if (($modificationTime = filemtime(Yii::app()->basePath . '/reports/' . $f)) > $latestModificationTime) {
+//                    $latestModificationTime = $modificationTime;
+//                    $latestReport = $f;
+//                }
+//            }
+//            
+//            if ($latestReport) {
+//                $reportHtml = file_get_contents(Yii::app()->basePath . '/reports/' . $latestReport);
+//            } else {
+//                $this->addError('id', 'Can\'t define latest report file');
+//                
+//                return false;
+//            }
             
-            foreach ($files as $f) {
-                if (in_array($f, array('.', '..'))) {
-                    continue;
-                }
-                
-                if (($modificationTime = filemtime(Yii::app()->basePath . '/reports/' . $f)) > $latestModificationTime) {
-                    $latestModificationTime = $modificationTime;
-                    $latestReport = $f;
-                }
-            }
-            
-            if ($latestReport) {
-                $reportHtml = file_get_contents(Yii::app()->basePath . '/reports/' . $latestReport);
-            } else {
-                $this->addError('id', 'Can\'t define latest report file');
-                
-                return false;
-            }
+            $reportHtml = file_get_contents(Settings::getValue(Settings::LAST_REPORT_LEADS));
         }
         
         $title = Yii::app()->name . ' Report';
@@ -215,7 +217,17 @@ class Report extends CActiveRecord {
         $headers = 'From: noreply@ad-center.com' . PHP_EOL;
         $headers .= 'Content-type: text/html' . PHP_EOL;
 
-        if (mail($this->email, $title, $body, $headers)) {
+//        if (mail($this->email, $title, $body, $headers)) {
+//            $this->last_send_at = date(Time::FORMAT_STANDART);
+//            $this->update();
+//
+//            if ($generateNew) {
+//                file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
+//            }
+//        } else {
+//            throw new Exception('Can\'t send report to ' . $this->email);
+//        }
+        if ($this->email('noreply@ad-center.com', $this->email, $title, $reportHtml, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
 
@@ -247,6 +259,48 @@ class Report extends CActiveRecord {
         }
         
         return $reports;
+    }
+    
+    private function email($from, $to, $title, $body, $attach = false) {
+        $file = $attach;
+        $file_size = filesize($file);
+        $handle = fopen($file, "r");
+        $content = fread($handle, $file_size);
+        fclose($handle);
+        $content = chunk_split(base64_encode($content));
+
+        // a random hash will be necessary to send mixed content
+        $separator = md5(time());
+
+        // carriage return type (we use a PHP end of line constant)
+        $eol = PHP_EOL;
+
+        // main header (multipart mandatory)
+        $headers = "From: " . $from . $eol;
+        $headers .= "MIME-Version: 1.0" . $eol;
+        $headers .= "Content-Type: multipart/mixed; boundary=\"" . $separator . "\"" . $eol;
+        $headers .= "Content-Transfer-Encoding: 7bit" . $eol;
+        $headers .= "This is a MIME encoded message." . $eol;
+
+        // message
+//        $headers .= "--" . $separator . $eol;
+//        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
+//        $headers .= "Content-Transfer-Encoding: 8bit" . $eol;
+//        $headers .= $body . $eol;
+
+        // attachment
+        $headers .= "--" . $separator . $eol;
+        $headers .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_FILENAME) . "\"" . $eol;
+        $headers .= "Content-Transfer-Encoding: base64" . $eol;
+        $headers .= "Content-Disposition: attachment" . $eol;
+        $headers .= $content;
+        $headers .= "--" . $separator . "--";
+        
+//        CVarDumper::dump($headers, 10, true);
+//        die('Debug Point' . PHP_EOL);
+
+        //SEND Mail
+        return mail($to, $title, $body, $headers);
     }
 
 }

@@ -18,12 +18,11 @@ class GenerateReportCommand extends CConsoleCommand {
     private $_alexaTemporaryDirectory;
     
     public function __construct($name, $runner) {
-        $this->_console = Console::getInstance($isForced, $isDebug);
         $this->_reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
-        $this->_currentReportDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m');
-        $this->_currentLeadsReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.html';
-        $this->_currentAlexaReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
-        $this->_alexaTemporaryDirectory = $currentReportDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
+        $this->_currentReportDirectory = $this->_reportsDirectory . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m');
+        $this->_currentLeadsReportPath = $this->_currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.html';
+        $this->_currentAlexaReportPath = $this->_currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
+        $this->_alexaTemporaryDirectory = $this->_reportsDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
         
         return parent::__construct($name, $runner);
     }
@@ -41,15 +40,17 @@ class GenerateReportCommand extends CConsoleCommand {
     }
     
     public function actionIndex($isForced = false, $isDebug = false) {
-        if (!file_exists($currentReportDirectory)) {
-            mkdir($currentReportDirectory, true);
+        $this->_console = Console::getInstance($isForced, $isDebug);
+        
+        if (!file_exists($this->_currentReportDirectory)) {
+            $this->_console->debug('Creating directory: ' . $this->_currentReportDirectory);
+            mkdir($this->_currentReportDirectory, 0777, true);
         }
         
-        if (!file_exists($alexaTemporaryDirectory)) {
-            mkdir($alexaTemporaryDirectory, true);
+        if (!file_exists($this->_alexaTemporaryDirectory)) {
+            $this->_console->debug('Creating directory: ' . $this->_alexaTemporaryDirectory);
+            mkdir($this->_alexaTemporaryDirectory, 0777, true);
         }
-        
-        // TODO
         
         /*
          * Leads report
@@ -74,29 +75,6 @@ class GenerateReportCommand extends CConsoleCommand {
          */
         
         $this->alexaReport();
-        
-        
-//        $this->_console->writeLine('Alexa');
-//        $this->_console->operationStart('Initializing');
-//        
-//        $reportHtml = '<h3>Alexa</h3>';
-//        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
-//        
-//        
-//        if (!file_exists($alexaTempDirectory)) {
-//            mkdir($alexaTempDirectory);
-//        }
-//        
-//        $this->_console->operationEnd();
-        
-        // Stamp
-        
-//        $this->_console->writeLine('Stamp');
-//        
-//        $reportHtml = '<p><i>Report generated on ' . date(Time::FORMAT_PRETTY) . '</i></p>';
-//        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
-//        
-//        $this->_console->writeLine('Report generated');
         
         return;
     }

@@ -206,7 +206,7 @@ class Report extends CActiveRecord {
 //        } else {
 //            throw new Exception('Can\'t send report to ' . $this->email);
 //        }
-        if ($this->mail_attachment(array(Settings::getValue(Settings::LAST_REPORT_ALEXA)), false, $this->email, 'noreply@ad-center.com', 'noreply', '', 'Report', $body)) {
+        if ($this->sendMail($body, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
 
@@ -311,6 +311,61 @@ class Report extends CActiveRecord {
         $header .= "--" . $uid . "--";
         
         return mail($mailto, $subject, "", $header);
+    }
+    
+    private function sendMail($body, $attachment) {
+        /* Email Detials */
+        $mail_to = $this->email;
+        $from_mail = "noreply@ad-center.com";
+        $from_name = "Report Generator";
+        $reply_to = "noreply@ad-center.com";
+        $subject = "Leads Report";
+        $message = $body;
+
+        /* Attachment File */
+        // Attachment location
+        $file_name = pathinfo($attachment, PATHINFO_BASENAME);
+        $path = pathinfo($attachment, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR;
+
+        // Read the file content
+        $file = $path . $file_name;
+        $file_size = filesize($file);
+        $handle = fopen($file, "r");
+        $content = fread($handle, $file_size);
+        fclose($handle);
+        $content = chunk_split(base64_encode($content));
+
+        /* Set the email header */
+        // Generate a boundary
+        $boundary = md5(uniqid(time()));
+
+        // Email header
+        $header = "From: " . $from_name . " <" . $from_mail . ">" . PHP_EOL;
+        $header .= "Reply-To: " . $reply_to . PHP_EOL;
+        $header .= "MIME-Version: 1.0" . PHP_EOL;
+
+        // Multipart wraps the Email Content and Attachment
+        $header .= "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"" . PHP_EOL;
+        $header .= "This is a multi-part message in MIME format." . PHP_EOL;
+        $header .= "--" . $boundary . PHP_EOL;
+
+        // Email content
+        // Content-type can be text/plain or text/html
+        $header .= "Content-type:text/plain; charset=iso-8859-1" . PHP_EOL;
+        $header .= "Content-Transfer-Encoding: 7bit" . PHP_EOL;
+        $header .= "$message" . PHP_EOL;
+        $header .= "--" . $boundary . PHP_EOL;
+
+        // Attachment
+        // Edit content type for different file extensions
+        $header .= "Content-Type: application/xml; name=\"" . $file_name . "\"" . PHP_EOL;
+        $header .= "Content-Transfer-Encoding: base64" . PHP_EOL;
+        $header .= "Content-Disposition: attachment; filename=\"" . $file_name . "\"" . PHP_EOL;
+        $header .= $content;
+        $header .= "--" . $boundary . "--";
+
+        // Send email
+        return mail($mail_to, $subject, "", $header);
     }
 
 }

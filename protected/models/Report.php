@@ -178,34 +178,13 @@ class Report extends CActiveRecord {
         $reportHtml;
         
         if ($generateNew) {
-            if (!($reportHtml = $this->generate())) {
-                return false;
-            }
+            $reportHtml = $this->generate();
         } else {
-//            $files = scandir(Yii::app()->basePath . '/reports');
-//            $latestModificationTime = 0;
-//            $latestReport = false;
-//            
-//            foreach ($files as $f) {
-//                if (in_array($f, array('.', '..'))) {
-//                    continue;
-//                }
-//                
-//                if (($modificationTime = filemtime(Yii::app()->basePath . '/reports/' . $f)) > $latestModificationTime) {
-//                    $latestModificationTime = $modificationTime;
-//                    $latestReport = $f;
-//                }
-//            }
-//            
-//            if ($latestReport) {
-//                $reportHtml = file_get_contents(Yii::app()->basePath . '/reports/' . $latestReport);
-//            } else {
-//                $this->addError('id', 'Can\'t define latest report file');
-//                
-//                return false;
-//            }
-            
             $reportHtml = file_get_contents(Settings::getValue(Settings::LAST_REPORT_LEADS));
+        }
+        
+        if (!$reportHtml) {
+            return false;
         }
         
         $title = Yii::app()->name . ' Report';
@@ -217,16 +196,6 @@ class Report extends CActiveRecord {
         $headers = 'From: noreply@ad-center.com' . PHP_EOL;
         $headers .= 'Content-type: text/html' . PHP_EOL;
 
-//        if (mail($this->email, $title, $body, $headers)) {
-//            $this->last_send_at = date(Time::FORMAT_STANDART);
-//            $this->update();
-//
-//            if ($generateNew) {
-//                file_put_contents(Yii::app()->basePath . '/reports/' . date(Time::FORMAT_STANDART) . '.html', $body);
-//            }
-//        } else {
-//            throw new Exception('Can\'t send report to ' . $this->email);
-//        }
         if ($this->email('noreply@ad-center.com', $this->email, $title, $reportHtml, Settings::getValue(Settings::LAST_REPORT_ALEXA))) {
             $this->last_send_at = date(Time::FORMAT_STANDART);
             $this->update();
@@ -283,24 +252,24 @@ class Report extends CActiveRecord {
         $headers .= "This is a MIME encoded message." . $eol;
 
         // message
-//        $headers .= "--" . $separator . $eol;
-//        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
-//        $headers .= "Content-Transfer-Encoding: 8bit" . $eol;
-//        $headers .= $body . $eol;
+        $headers .= "--" . $separator . $eol;
+        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
+        $headers .= "Content-Transfer-Encoding: 8bit" . $eol;
+        $headers .= $body . $eol;
 
         // attachment
         $headers .= "--" . $separator . $eol;
-        $headers .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_FILENAME) . "\"" . $eol;
+        $headers .= "Content-Type: application/octet-stream; name=\"" . pathinfo($attach, PATHINFO_BASENAME) . "\"" . $eol;
         $headers .= "Content-Transfer-Encoding: base64" . $eol;
         $headers .= "Content-Disposition: attachment" . $eol;
         $headers .= $content;
         $headers .= "--" . $separator . "--";
         
-//        CVarDumper::dump($headers, 10, true);
-//        die('Debug Point' . PHP_EOL);
+        CVarDumper::dump($headers, 10, true);
+        die('Debug Point' . PHP_EOL);
 
         //SEND Mail
-        return mail($to, $title, $body, $headers);
+        return mail($to, $title, "", $headers);
     }
 
 }

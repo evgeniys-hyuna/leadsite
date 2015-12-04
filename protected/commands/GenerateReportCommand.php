@@ -10,6 +10,24 @@
  * @author jomedia_64
  */
 class GenerateReportCommand extends CConsoleCommand {
+    private $_console;
+    private $_reportsDirectory;
+    private $_currentReportDirectory;
+    private $_currentLeadsReportPath;
+    private $_currentAlexaReportPath;
+    private $_alexaTemporaryDirectory;
+    
+    public function __construct($name, $runner) {
+        $this->_console = Console::getInstance($isForced, $isDebug);
+        $this->_reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
+        $this->_currentReportDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m');
+        $this->_currentLeadsReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.html';
+        $this->_currentAlexaReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
+        $this->_alexaTemporaryDirectory = $currentReportDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
+        
+        return parent::__construct($name, $runner);
+    }
+    
     public function beforeAction($action, $params) {
         Console::writeLine('Command started');
         
@@ -23,13 +41,6 @@ class GenerateReportCommand extends CConsoleCommand {
     }
     
     public function actionIndex($isForced = false, $isDebug = false) {
-        $console = Console::getInstance($isForced, $isDebug);
-        $reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
-        $currentReportDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m');
-        $currentLeadsReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.html';
-        $currentAlexaReportPath = $currentReportDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
-        $alexaTemporaryDirectory = $currentReportDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
-        
         if (!file_exists($currentReportDirectory)) {
             mkdir($currentReportDirectory, true);
         }
@@ -40,31 +51,58 @@ class GenerateReportCommand extends CConsoleCommand {
         
         // TODO
         
-        // search leads
+        /*
+         * Leads report
+         */
         
-        // generate report
+        $this->generateLeadsReport();
         
-        // clear alexa temp directory
+        /*
+         * Clear alexa temp directory
+         */
         
-        // generate all keywords alexa
+        $this->cleanAlexaTempDirectory();
         
-        // create zip report with updated keywords
+        /*
+         * Generate all keywords alexa report
+         */
+        
+        $this->generateAlexaReports();
+        
+        /*
+         * Alexa report
+         */
+        
+        $this->alexaReport();
         
         
+//        $this->_console->writeLine('Alexa');
+//        $this->_console->operationStart('Initializing');
+//        
+//        $reportHtml = '<h3>Alexa</h3>';
+//        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
+//        
+//        
+//        if (!file_exists($alexaTempDirectory)) {
+//            mkdir($alexaTempDirectory);
+//        }
+//        
+//        $this->_console->operationEnd();
         
+        // Stamp
         
+//        $this->_console->writeLine('Stamp');
+//        
+//        $reportHtml = '<p><i>Report generated on ' . date(Time::FORMAT_PRETTY) . '</i></p>';
+//        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
+//        
+//        $this->_console->writeLine('Report generated');
         
-        
-        
-        $reportFile = Yii::app()->getBasePath() . '/reports/' . date(Time::FORMAT_STANDART) . '.html';
-        $alexaTempDirectory = Yii::app()->getBasePath() . '/reports/alexa_temp';
-        $reportHtml = '';
-        
-        // Leads
-        $console->writeLine('Leads');
-        $console->operationStart('Searching');
-        
-        $reportHtml .= '<h3>Leads</h3>';
+        return;
+    }
+    
+    private function generateLeadsReport() {
+        $this->_console->operationStart('Searching leads');
         
         $criteria = new CDbCriteria();
         $criteria->alias = 'site';
@@ -77,87 +115,77 @@ class GenerateReportCommand extends CConsoleCommand {
         $criteria->distinct = true;
         $site = Site::model()->findAll($criteria);
         
-        $console->operationEnd();
-        $console->progressStart('Collecting', count($site));
+        $this->_console->operationEnd();
+        $this->_console->progressStart('Collecting', count($site));
 
-        $reportHtml .= '<table>';
-        $row = '<tr>';
-        $row .= '<th>Domain</th>';
-        $row .= '<th>Keyword</th>';
-        $row .= '<th>Added On</th>';
-        $row .= '</tr>';
-        $reportHtml .= $row;
+        $reportHtml = '<h3>Leads</h3><table>';
+        $reportHtml .= '<tr><th>Domain</th><th>Keyword</th><th>Added On</th></tr>';;
         
         foreach ($site as $s) {
-            $console->progressStep();
+            $this->_console->progressStep();
             
             if (IgnoreList::isInList($s->domain)) {
                 continue;
             }
             
-            $row = '<tr>';
-            $row .= '<td>' . $s->domain . '</td>';
-            $row .= '<td>' . $s->keyword->name . '</td>';
-            $row .= '<td>' . Time::toPretty($s->created_at) . '</td>';
-            $row .= '</tr>';
-            $reportHtml .= $row;
+            $reportHtml .= String::build('<tr><td>{domain}</td><td>{keyword}</td><td>{date}</td></tr>', array(
+                'domain' => $s->domain,
+                'keyword' => $s->keyword->name,
+                'date' => Time::toPretty($s->created_at),
+            ));
         }
         
         $reportHtml .= '</table>';
-        file_put_contents($reportFile, $reportHtml);
         
-        $console->progressEnd();
+        file_put_contents($this->_currentLeadsReportPath, $reportHtml);
+
+        $this->_console->progressEnd();
+    }
+    
+    private function cleanAlexaTempDirectory() {
+        $temporaryFiles = scandir($this->_alexaTemporaryDirectory);
         
-        // Alexa
+        $this->_console->progressStart('Clearing alexa temporary directory', count($temporaryFiles));
+
+        foreach ($temporaryFiles as $f) {
+            $this->_console->progressStep();
+            
+            if (in_array($f, array('.', '..'))) {
+                continue;
+            }
+            
+            $path = $this->_alexaTemporaryDirectory . DIRECTORY_SEPARATOR . $f;
+            
+            $this->_console->debug('Deleting: ' . $path);
+            
+            unlink($path);
+        }
         
-        $console->writeLine('Alexa');
-        $console->operationStart('Initializing');
-        
-        $reportHtml = '<h3>Alexa</h3>';
-        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
-        
+        $this->_console->progressEnd();
+    }
+    
+    private function generateAlexaReports() {
         $keyword = Keyword::model()->findAll();
         
-        if (!file_exists($alexaTempDirectory)) {
-            mkdir($alexaTempDirectory);
-        }
-        
-        $console->operationEnd();
-        $console->operationStart('Cleaning temporary files');
-        
-//        $temporaryFiles = scandir($alexaTempDirectory);
-//        
-//        foreach ($temporaryFiles as $f) {
-//            $console->operationStep();
-//            
-//            if (in_array($f, array('.', '..'))) {
-//                continue;
-//            }
-//            
-//            $path = $alexaTempDirectory . DIRECTORY_SEPARATOR . $f;
-//            
-//            $console->debug('Deleting: ' . $path);
-//            
-//            unlink();
-//        }
-        
-        $console->operationEnd();
-        $console->progressStart('Generating alexa reports', count($keyword));
+        $this->_console->progressStart('Generating alexa reports', count($keyword));
         
         foreach ($keyword as $k) {
-            $console->progressStep();
-//            $console->debug($k->name);
-//            
-//            $reportHtml = '<p>Keyword: ' . $k->name . '</p><br />';
-//            $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
-//            
-//            file_put_contents($alexaTempDirectory . DIRECTORY_SEPARATOR . $k->name . '.html', $reportHtml);
-//            
-//            unset($reportHtml);
+            $this->_console->progressStep();
+            $this->_console->debug($k->name);
+            
+            $reportHtml = '<p>Keyword: ' . $k->name . '</p><br />';
+            $reportHtml .= $k->alexaToHtml(Keyword::ALEXA_SEARCH_METHOD_PARTIAL);
+            
+            file_put_contents($this->_alexaTemporaryDirectory . DIRECTORY_SEPARATOR . $k->name . '.html', $reportHtml);
+            
+            unset($reportHtml);
         }
         
-        $console->progressEnd();
-        $console->operationStart('Selecting updated keywords');
+        $this->_console->progressEnd();
+    }
+    
+    private function alexaReport() {
+        $this->_console->operationStart('Selecting updated keywords');
         
         $updatedKeywords = Yii::app()->db->createCommand()
                 ->select('name')
@@ -170,49 +198,34 @@ class GenerateReportCommand extends CConsoleCommand {
                 ))
                 ->queryColumn();
         
-        $console->operationEnd();
-        $console->operationStart('Creating alexa zip achive');
+        $this->_console->operationEnd();
+        $this->_console->operationStart('Creating alexa zip achive');
         
-        $zipPath = Yii::app()->getBasePath() . '/reports/' . date(Time::FORMAT_STANDART) . ' alexa.zip';
         $zip = new ZipArchive();
         
-        if (!$zip->open($zipPath, ZipArchive::CREATE)) {
+        if (!$zip->open($this->_currentAlexaReportPath, ZipArchive::CREATE)) {
             die('Can\'t open or create ZIP file' . PHP_EOL);
         }
         
-        $console->debug('Searching for files in: ' . $alexaTempDirectory);
-        $files = scandir($alexaTempDirectory);
+        $this->_console->debug('Searching for files in: ' . $this->_alexaTemporaryDirectory);
+        $files = scandir($this->_alexaTemporaryDirectory);
         
         foreach ($files as $f) {
-            $console->operationStep();
+            $this->_console->operationStep();
             
             if (in_array($f, array('.', '..'))) {
                 continue;
             }
             
             if (in_array(substr($f, 0, strpos($f, pathinfo($f, PATHINFO_EXTENSION)) - 1), $updatedKeywords)) {
-                $path = $alexaTempDirectory . DIRECTORY_SEPARATOR . $f;
-                
-                $console->debug('Adding to archive: ' . $path);
-                
-                $zip->addFile($path, $f);
+                $this->_console->debug('Adding to archive: ' . $f);
+                $zip->addFile($this->_alexaTemporaryDirectory . DIRECTORY_SEPARATOR . $f, $f);
             }
         }
         
         $zip->close();
         
-        $console->operationEnd();
-        
-        // Stamp
-        
-        $console->writeLine('Stamp');
-        
-        $reportHtml = '<p><i>Report generated on ' . date(Time::FORMAT_PRETTY) . '</i></p>';
-        file_put_contents($reportFile, $reportHtml, FILE_APPEND);
-        
-        $console->writeLine('Report generated');
-        
-        return;
+        $this->_console->operationEnd();
     }
     
 }

@@ -253,8 +253,8 @@ class Report extends CActiveRecord {
 
         // message
         $headers .= "--" . $separator . $eol;
-        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
-        $headers .= "Content-Transfer-Encoding: 8bit" . $eol;
+        $headers .= "Content-Type: text/html" . $eol; // ; charset=\"iso-8859-1\"
+//        $headers .= "Content-Transfer-Encoding: 8bit" . $eol;
         $headers .= $body . $eol;
 
         // attachment
@@ -266,7 +266,7 @@ class Report extends CActiveRecord {
         $headers .= "--" . $separator . "--";
         
         //SEND Mail
-        return mail($to, $title, "", $headers);
+        return mail($to, $title, $body, $headers);
     }
 
 }

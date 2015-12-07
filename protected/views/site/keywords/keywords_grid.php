@@ -21,6 +21,7 @@
         array(
             'name' => 'search_engine',
             'header' => 'Search Engine',
+            'filter' => false,
             'value' => function ($e) {
                 return ucwords($e->search_engine);
             }
@@ -29,24 +30,29 @@
             'name' => 'status',
             'header' => 'Status',
             'type' => 'raw',
+            'filter' => false,
             'value' => function ($e) {
                 return CHtml::tag('span', array(
                     'title' => String::build('Last Check: {last_check} Next Check: {next_check}', array(
                         'last_check' => Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->checked_at),
                         'next_check' => $e->period ? date(Time::FORMAT_DATE_PRETTY, strtotime($e->checked_at) + $e->period) : 'No autocheck',
                     )),
-                ), ucwords($e->status));
+                ), ucwords(str_replace('_', ' ', $e->status)));
             },
         ),
         array(
             'name' => 'category_id',
             'header' => 'Category',
-//            'filter' => CHtml::dropDownList('Keyword[category_id]', $keyword->category_id, CHtml::listData(Category::getList(), 'id', 'name'), array(
-//                'empty' => 'uncategorized',
-//            )),
+            'type' => 'raw',
             'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
             'value' => function ($e) {
-                return $e->category ? $e->category->name : 'uncategorized';
+                if ($e->category) {
+                    return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
+                        'categoryId' => $e->category_id,
+                    )));
+                } else {
+                    return '<i style="color: #afafaf;">-uncategorized-</i>';
+                }
             },
         ),
     ),

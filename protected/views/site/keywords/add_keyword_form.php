@@ -10,6 +10,14 @@
             'rows' => 5,
         )) ?>
     </div>
+    
+    <div class="row">
+        <?= CHtml::label('Category', 'ddlCategory') ?>
+        
+        <?= CHtml::activeDropDownList($keywordForm, 'category_id', CHtml::listData(Category::model()->findAll(), 'id', 'name'), array(
+            'id' => 'ddlCategory',
+        )) ?>
+    </div>
 
     <div class="row">
         <?= CHtml::label('Autocheck (in seconds)', 'txfPeriod') ?>

@@ -136,6 +136,7 @@ class SiteController extends Controller {
 
                 $newKeyword = new Keyword();
                 $newKeyword->name = $k;
+                $newKeyword->category_id = $postKeywordForm['category_id'];
                 $newKeyword->search_engine = $postKeywordForm['searchEngine'];
                 $newKeyword->period = $postKeywordForm['period'];
 

@@ -12,7 +12,7 @@
     <div class="row">
         <?= CHtml::label('Category', 'ddlCategory') ?>
         
-        <?= CHtml::activeDropDownList($keyword, 'category_id', Category::getList(), array(
+        <?= CHtml::activeDropDownList($keyword, 'category_id', CHtml::listData(Category::model()->findAll(), 'id', 'name'), array(
             'id' => 'ddlCategory',
             'prompt' => 'uncategorized',
         )) ?>

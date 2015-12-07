@@ -11,6 +11,7 @@
  */
 class KeywordForm extends CFormModel {
     public $keywords;
+    public $category_id;
     public $searchEngine;
     public $period;
 }

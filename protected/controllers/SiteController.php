@@ -103,6 +103,7 @@ class SiteController extends Controller {
     public function actionKeywords() {
         $keyword = new Keyword();
         $keywordForm = new KeywordForm();
+        $categoryForm = new CategoryForm();
 
         if (($postKeywordForm = Yii::app()->request->getParam('KeywordForm'))) {
             $keywords = array();
@@ -142,9 +143,19 @@ class SiteController extends Controller {
             $this->refresh();
         }
         
+        if (($postCategoryForm = Yii::app()->request->getParam('CategoryForm'))) {
+            $category = new Category();
+            $category->setAttributes($postCategoryForm);
+            
+            if (!$category->save()) {
+                throw new Exception(print_r($category->getErrors(), true));
+            }
+        }
+        
         $this->render('keywords', array(
             'keyword' => $keyword,
             'keywordForm' => $keywordForm,
+            'categoryForm' => $categoryForm,
         ));
     }
     

@@ -5,7 +5,7 @@ $status = array(
         'total' => Executor::model()->count(),
         'done' => Executor::model()->count('status = \'' . Executor::STATUS_DONE . '\''),
     ),
-    'pending' => Keyword::model()->count('status = \'' . Keyword::STATUS_PENDING . '\''),
+    'pending' => Keyword::model()->count('status = \'' . Keyword::STATUS_PENDING . '\' and deleted_at is null'),
     'alexa' => filemtime(Yii::app()->basePath . '/../uploads/alexa/top-1m.csv'),
 );
 

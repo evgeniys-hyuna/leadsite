@@ -60,11 +60,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'header' => '',
             'type' => 'raw',
             'value' => function ($e) {
-                if ($e->status == Executor::STATUS_ERROR) {
-                    return CHtml::link('Terminate', Yii::app()->createUrl('site/terminateExecutor', array(
-                        'executorId' => $e->id,
-                    )));
-                }
+                return CHtml::link('Terminate', Yii::app()->createUrl('site/terminateExecutor', array(
+                    'executorId' => $e->id,
+                )), array(
+                    'class' => 'btn btn-sm btn-danger',
+                ));
             }
         ),
     ),

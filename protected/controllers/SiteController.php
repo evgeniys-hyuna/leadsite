@@ -173,6 +173,37 @@ class SiteController extends Controller {
         ));
     }
     
+    public function actionCategory($categoryId) {
+        $category = Category::model()->findByPk($categoryId);
+        
+        if (($postCategory = Yii::app()->request->getParam('Category'))) {
+            $category->setAttributes($postCategory);
+            
+            if (!$category->save()) {
+                throw new Exception(print_r($category->getErrors(), true));
+            }
+            
+            $this->redirect(Yii::app()->createUrl('site/keywords'));
+        }
+        
+        return $this->render('category', array(
+            'category' => $category,
+        ));
+    }
+    
+    public function actionCategoryDelete($categoryId) {
+        $category = Category::model()->findByPk($categoryId);
+        
+        foreach ($category->keywords as $k) {
+            $k->category_id = null;
+            $k->update();
+        }
+        
+        $category->delete();
+        
+        $this->redirect(Yii::app()->createUrl('site/keywords'));
+    }
+    
     public function actionDev() {
         $executor = new Executor();
         $settings = new Settings();

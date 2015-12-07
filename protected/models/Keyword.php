@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'lds_keyword':
  * @property integer $id
  * @property string $name
+ * @property integer $category_id
  * @property string $search_engine
  * @property string $status
  * @property integer $period
@@ -62,6 +63,7 @@ class Keyword extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
         );
     }
 
@@ -91,18 +93,25 @@ class Keyword extends CActiveRecord {
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
      */
-    public function search() {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
+    public function search($categoryId = false) {
         $criteria = new CDbCriteria;
 
-        $criteria->compare('id', $this->id);
-        $criteria->compare('name', $this->name, true);
-        $criteria->compare('status', $this->status, true);
-        $criteria->compare('created_at', $this->created_at, true);
-        $criteria->compare('updated_at', $this->updated_at, true);
-        $criteria->addCondition('deleted_at IS NULL');
-        $criteria->order = 'created_at DESC';
+        $criteria->alias = 'keyword';
+        $criteria->compare('keyword.id', $this->id);
+        $criteria->compare('keyword.name', $this->name, true);
+        
+        if ($categoryId) {
+            $criteria->compare('keyword.category_id', $categoryId);
+        }
+        
+        $criteria->compare('keyword.status', $this->status, true);
+        $criteria->compare('keyword.created_at', $this->created_at, true);
+        $criteria->compare('keyword.updated_at', $this->updated_at, true);
+        $criteria->addCondition('keyword.deleted_at IS NULL');
+        $criteria->order = 'keyword.created_at DESC';
+        $criteria->with = array(
+            'category',
+        );
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,

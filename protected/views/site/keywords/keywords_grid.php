@@ -49,7 +49,9 @@
                 if ($e->category) {
                     return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
                         'categoryId' => $e->category_id,
-                    )));
+                    )), array(
+                        'title' => $e->category->description,
+                    ));
                 } else {
                     return '<i style="color: #afafaf;">-uncategorized-</i>';
                 }

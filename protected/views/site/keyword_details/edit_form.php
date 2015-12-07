@@ -8,6 +8,15 @@
             'id' => 'txfName',
         )) ?>
     </div>
+    
+    <div class="row">
+        <?= CHtml::label('Category', 'ddlCategory') ?>
+        
+        <?= CHtml::activeDropDownList($keyword, 'category_id', Category::getList(), array(
+            'id' => 'ddlCategory',
+            'prompt' => 'uncategorized',
+        )) ?>
+    </div>
 
     <div class="row">
         <?= CHtml::label('Status', 'ddlStatus') ?>

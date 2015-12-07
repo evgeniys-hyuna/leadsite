@@ -38,5 +38,16 @@
                 ), ucwords($e->status));
             },
         ),
+        array(
+            'name' => 'category_id',
+            'header' => 'Category',
+//            'filter' => CHtml::dropDownList('Keyword[category_id]', $keyword->category_id, CHtml::listData(Category::getList(), 'id', 'name'), array(
+//                'empty' => 'uncategorized',
+//            )),
+            'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
+            'value' => function ($e) {
+                return $e->category ? $e->category->name : 'uncategorized';
+            },
+        ),
     ),
 )) ?>

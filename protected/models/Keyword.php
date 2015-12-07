@@ -51,8 +51,8 @@ class Keyword extends CActiveRecord {
             array('status', 'length', 'max' => 11),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, status, created_at, updated_at, deleted_at', 'safe', 'on' => 'search'),
-            array('name, search_engine, status, period, updated_at', 'safe'),
+            array('id, name, category_id, status, created_at, updated_at, deleted_at', 'safe', 'on' => 'search'),
+            array('name, category_id, search_engine, status, period, updated_at', 'safe'),
         );
     }
 
@@ -93,17 +93,13 @@ class Keyword extends CActiveRecord {
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
      */
-    public function search($categoryId = false) {
+    public function search() {
         $criteria = new CDbCriteria;
 
         $criteria->alias = 'keyword';
         $criteria->compare('keyword.id', $this->id);
         $criteria->compare('keyword.name', $this->name, true);
-        
-        if ($categoryId) {
-            $criteria->compare('keyword.category_id', $categoryId);
-        }
-        
+        $criteria->compare('keyword.category_id', $this->category_id);
         $criteria->compare('keyword.status', $this->status, true);
         $criteria->compare('keyword.created_at', $this->created_at, true);
         $criteria->compare('keyword.updated_at', $this->updated_at, true);

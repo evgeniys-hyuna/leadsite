@@ -110,5 +110,19 @@ class Category extends CActiveRecord {
         
         return parent::beforeSave();
     }
+    
+    public static function getList() {
+        $category = Category::model()->findAll();
+        $list = array();
+        
+        foreach ($category as $c) {
+            array_push($list, array(
+                'id' => $c->id,
+                'name' => $c->name,
+            ));
+        }
+        
+        return $list;
+    }
 
 }

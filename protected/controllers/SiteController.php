@@ -104,6 +104,10 @@ class SiteController extends Controller {
         $keyword = new Keyword();
         $keywordForm = new KeywordForm();
         $categoryForm = new CategoryForm();
+        
+        if (($postKeyword = Yii::app()->request->getParam('Keyword'))) {
+            $keyword->setAttributes($postKeyword);
+        }
 
         if (($postKeywordForm = Yii::app()->request->getParam('KeywordForm'))) {
             $keywords = array();

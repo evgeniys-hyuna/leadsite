@@ -24,4 +24,8 @@ $status = array(
         <span class="badge"><?= date(Time::FORMAT_PRETTY, $status['alexa']) ?></span>
         Alexa Rankings file updated on
     </li>
+    <li class="list-group-item list-group-item-info">
+        <span class="badge"><?= date(Time::FORMAT_PRETTY) ?></span>
+        Server time
+    </li>
 </ul>

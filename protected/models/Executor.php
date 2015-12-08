@@ -115,6 +115,10 @@ class Executor extends CActiveRecord {
         $criteria->compare('created_at', $this->created_at, true);
         $criteria->compare('updated_at', $this->updated_at, true);
         $criteria->addCondition('deleted_at IS NULL');
+        $criteria->addCondition('status = :status', 'OR');
+        $criteria->params = array(
+            ':status' => Executor::STATUS_ERROR,
+        );
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,

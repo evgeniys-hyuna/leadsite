@@ -16,6 +16,7 @@
         
         <?= CHtml::activeDropDownList($keywordForm, 'category_id', CHtml::listData(Category::model()->findAll(), 'id', 'name'), array(
             'id' => 'ddlCategory',
+            'prompt' => '-uncategorized-',
         )) ?>
     </div>
 

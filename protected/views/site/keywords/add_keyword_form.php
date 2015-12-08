@@ -24,7 +24,7 @@
 
         <?= CHtml::dropDownList('ddlPeriod', Time::SECONDS_IN_WEEK, array(
 //            Time::SECONDS_IN_MINUTE => 'Every minute',
-            Time::SECONDS_IN_HOUR => 'Every hour',
+//            Time::SECONDS_IN_HOUR => 'Every hour',
             Time::SECONDS_IN_DAY => 'Every day',
             Time::SECONDS_IN_WEEK => 'Every week',
             Time::SECONDS_IN_MONTH => 'Every month',

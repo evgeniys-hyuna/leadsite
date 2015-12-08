@@ -20,6 +20,10 @@ class KeywordServiceCommand extends CConsoleCommand {
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
         
+        /**
+         * Update expired keywords
+         */
+        
         $console->writeLine('Updating expired...');
         
         $criteria = new CDbCriteria();
@@ -34,6 +38,32 @@ class KeywordServiceCommand extends CConsoleCommand {
             'status' => Keyword::STATUS_PENDING,
             'updated_at' => date(Time::FORMAT_STANDART),
         ), $criteria);
+        
+        /**
+         * Stop timed out executors
+         */
+        
+        $console->writeLine('Checking executors...');
+        
+        if (($executor = Executor::model()->findAll('status = :status', array(
+            ':status' => Executor::STATUS_CHECKING,
+        )))) {
+            $console->progressStart('Checking', count($executor));
+
+            foreach ($executor as $e) {
+                $console->progressStep();
+
+                if ((time() - strtotime($e->updated_at)) > Time::SECONDS_IN_HOUR) {
+                    $e->stop(Executor::STATUS_ERROR, 'Timeout');
+                }
+            }
+
+            $console->progressEnd();
+        }
+        
+        /**
+         * Fix InProgress keywords without executors
+         */
         
         $console->writeLine('Fixing InProgress...');
         

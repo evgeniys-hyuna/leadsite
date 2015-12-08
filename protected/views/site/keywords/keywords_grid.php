@@ -1,7 +1,7 @@
 <?php $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'grvKeywords',
     'dataProvider' => $keyword->search(),
-    'filter' => $keyword,
+//    'filter' => $keyword,
     'htmlOptions' => array(),
     'columns' => array(
         array(
@@ -24,7 +24,7 @@
             'filter' => false,
             'value' => function ($e) {
                 return ucwords($e->search_engine);
-            }
+            },
         ),
         array(
             'name' => 'status',

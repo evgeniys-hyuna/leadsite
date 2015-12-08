@@ -104,7 +104,7 @@ class Keyword extends CActiveRecord {
         $criteria->compare('keyword.created_at', $this->created_at, true);
         $criteria->compare('keyword.updated_at', $this->updated_at, true);
         $criteria->addCondition('keyword.deleted_at IS NULL');
-        $criteria->order = 'keyword.created_at DESC';
+        $criteria->order = 'keyword.created_at DESC, keyword.name ASC';
         $criteria->with = array(
             'category',
         );

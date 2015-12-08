@@ -103,7 +103,8 @@ class SiteController extends Controller {
     public function actionKeywords() {
         $keyword = new Keyword();
         $keywordForm = new KeywordForm();
-        $categoryForm = new CategoryForm();
+//        $categoryForm = new CategoryForm();
+        $categorySuggestForm = new CategorySuggestForm();
         
         if (($postKeyword = Yii::app()->request->getParam('Keyword'))) {
             $keyword->setAttributes($postKeyword);
@@ -148,19 +149,44 @@ class SiteController extends Controller {
             $this->refresh();
         }
         
-        if (($postCategoryForm = Yii::app()->request->getParam('CategoryForm'))) {
-            $category = new Category();
-            $category->setAttributes($postCategoryForm);
-            
-            if (!$category->save()) {
-                throw new Exception(print_r($category->getErrors(), true));
+//        if (($postCategoryForm = Yii::app()->request->getParam('CategoryForm'))) {
+//            $category = new Category();
+//            $category->setAttributes($postCategoryForm);
+//            
+//            if (!$category->save()) {
+//                throw new Exception(print_r($category->getErrors(), true));
+//            }
+//            
+//            $this->refresh();
+//        }
+        
+        if (($postCategorySuggestForm = Yii::app()->request->getParam('CategorySuggestForm'))) {
+            if (strlen($postCategorySuggestForm['name']) > 0) {
+                if (($existingCategory = Category::model()->find('name = :name', array(
+                    'name' => $postCategorySuggestForm['name'],
+                )))) {
+                    $keyword->category_id = $existingCategory->id;
+                    $categorySuggestForm->name = $existingCategory->name;
+                } else {
+                    $category = new Category();
+                    $category->setAttributes($postCategorySuggestForm);
+
+                    if (!$category->save()) {
+                        throw new Exception(print_r($category->getErrors(), true));
+                    }
+
+                    $this->refresh();
+                }
+            } else {
+                $keyword->category_id = null;
             }
         }
         
         $this->render('keywords', array(
             'keyword' => $keyword,
             'keywordForm' => $keywordForm,
-            'categoryForm' => $categoryForm,
+//            'categoryForm' => $categoryForm,
+            'categorySuggestForm' => $categorySuggestForm,
         ));
     }
     
@@ -389,6 +415,28 @@ class SiteController extends Controller {
         } else {
             $this->render('site/reports');
         }
+    }
+    
+    public function actionSuggestCategory() {
+        $searchFor = '';
+        
+        if ((!$searchFor = Yii::app()->request->getParam('term'))) {
+            throw new Exception('Can\'t get search term');
+        }
+        
+        $result = array();
+        $category = Category::model()->findAll('name like :name', array(
+            ':name' => '%' . $searchFor . '%',
+        ));
+        
+        foreach ($category as $c) {
+            $result[] = array(
+                'label' => $c->name,
+                'value' => $c->name,
+            );
+        }
+        
+        echo CJSON::encode($result);
     }
 
 }

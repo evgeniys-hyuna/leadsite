@@ -16,6 +16,7 @@
         $this->widget('ext.yii-selectize.YiiSelectize', array(
             'name' => 'KeywordTags',
             'data' => CHtml::listData(Tag::model()->findAll(), 'name', 'name'),
+            'selectedValues' => CHtml::listData($keyword->tags, 'name', 'name'),
             'fullWidth' => true,
             'htmlOptions' => array(
                 'id' => 'slzCategory',

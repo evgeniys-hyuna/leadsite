@@ -386,6 +386,36 @@ class SiteController extends Controller {
                 throw new Exception(print_r($keyword->getErrors(), true));
             }
             
+            if (($postTags = Yii::app()->request->getPost('KeywordTags'))) {
+                $tagIds = array();
+                
+                Yii::app()->db->createCommand()->delete('lds_keyword_tag', 'keyword_id = :keyword_id', array(
+                    ':keyword_id' => $keywordId,
+                ));
+                
+                foreach ($postTags as $t) {
+                    if (!($tag = Tag::model()->find('name = :name', array(
+                        ':name' => $t,
+                    )))) {
+                        $tag = new Tag();
+                        $tag->name = $t;
+
+                        if (!$tag->save()) {
+                            throw new Exception('Can\'t save tag. ' . print_r($tag->getErrors(), true));
+                        }
+                    }
+
+                    $tagIds[] = $tag->id;
+                }
+                
+                foreach ($tagIds as $t) {
+                    Yii::app()->db->createCommand()->insert('lds_keyword_tag', array(
+                        'keyword_id' => $keywordId,
+                        'tag_id' => $t,
+                    ));
+                }
+            }
+            
             $this->redirect(Yii::app()->createUrl('site/keywords'));
         }
         

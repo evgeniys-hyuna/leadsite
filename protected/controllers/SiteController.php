@@ -112,7 +112,28 @@ class SiteController extends Controller {
 
         if (($postKeywordForm = Yii::app()->request->getParam('KeywordForm'))) {
             $keywords = array();
+            $keywordIds = array();
+            $tagIds = array();
             
+            // Handle Category
+            if (isset($postKeywordForm['category'])) {
+                foreach ($postKeywordForm['category'] as $c) {
+                    if (!($tag = Tag::model()->find('name = :name', array(
+                        ':name' => $c,
+                    )))) {
+                        $tag = new Tag();
+                        $tag->name = $c;
+
+                        if (!$tag->save()) {
+                            throw new Exception('Can\'t save tag. ' . print_r($tag->getErrors(), true));
+                        }
+                    }
+
+                    $tagIds[] = $tag->id;
+                }
+            }
+            
+            // Handle Keywords
             if (count($keywords = explode(PHP_EOL, $postKeywordForm['keywords'])) <= 1) {
                 $keywords = array($postKeywordForm['keywords']);
             }
@@ -137,12 +158,24 @@ class SiteController extends Controller {
 
                 $newKeyword = new Keyword();
                 $newKeyword->name = $k;
-                $newKeyword->category_id = $postKeywordForm['category_id'];
+//                $newKeyword->category_id = $postKeywordForm['category_id'];
                 $newKeyword->search_engine = $postKeywordForm['searchEngine'];
                 $newKeyword->period = $postKeywordForm['period'];
 
                 if (!$newKeyword->save()) {
                     throw new Exception(print_r($newKeyword->getErrors(), true));
+                }
+                
+                $keywordIds[] = $newKeyword->id;
+            }
+            
+            // Handle relations
+            foreach ($keywordIds as $k) {
+                foreach ($tagIds as $t) {
+                    Yii::app()->db->createCommand()->insert('lds_keyword_tag', array(
+                        'keyword_id' => $k,
+                        'tag_id' => $t,
+                    ));
                 }
             }
             

@@ -57,5 +57,20 @@
                 }
             },
         ),
+        array(
+            'header' => 'Tags',
+            'type' => 'raw',
+            'value' => function ($e) {
+                $html = '';
+                
+                foreach ($e->tags as $t) {
+                    $html .= String::build('<span class="label label-info">{name}</span>&nbsp;', array(
+                        'name' => $t->name,
+                    ));
+                }
+                
+                return $html;
+            },
+        ),
     ),
 )) ?>

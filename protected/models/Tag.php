@@ -30,10 +30,10 @@ class Tag extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name, created_at, updated_at', 'required'),
+            array('name', 'required'),
             array('name', 'length', 'max' => 64),
             array('description', 'length', 'max' => 512),
-            array('deleted_at', 'safe'),
+            array('name, description', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, name, description, created_at, updated_at, deleted_at', 'safe', 'on' => 'search'),
@@ -103,5 +103,15 @@ class Tag extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-
+    
+    public function beforeSave() {
+        if ($this->isNewRecord) {
+            $this->created_at = date(Time::FORMAT_STANDART);
+        }
+        
+        $this->updated_at = date(Time::FORMAT_STANDART);
+        
+        return parent::beforeSave();
+    }
+    
 }

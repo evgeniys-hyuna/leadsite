@@ -12,12 +12,20 @@
     </div>
     
     <div class="row">
-        <?= CHtml::label('Category', 'ddlCategory') ?>
+        <?= CHtml::label('Tags', 'slzCategory') ?>
         
-        <?= CHtml::activeDropDownList($keywordForm, 'category_id', CHtml::listData(Category::model()->findAll(), 'id', 'name'), array(
-            'id' => 'ddlCategory',
-            'prompt' => '-uncategorized-',
-        )) ?>
+        <?php
+        $this->widget('ext.yii-selectize.YiiSelectize', array(
+            'model' => $keywordForm,
+            'attribute' => 'category',
+            'data' => CHtml::listData(Tag::model()->findAll(), 'name', 'name'),
+            'fullWidth' => true,
+            'htmlOptions' => array(
+                'id' => 'slzCategory',
+            ),
+            'multiple' => true,
+        ));
+        ?>
     </div>
 
     <div class="row">

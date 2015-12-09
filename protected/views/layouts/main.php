@@ -52,6 +52,10 @@
                     'keywordAlexa',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Keywords', Yii::app()->createUrl('/site/keywords')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
+                    'tags', 
+                    'tagDetails', 
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Tags', Yii::app()->createUrl('/site/tags')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
                     'reports', 
                     'reportsBrowse',
                     'reportsDetails',

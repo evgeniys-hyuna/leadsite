@@ -22,6 +22,6 @@
             'class' => 'btn btn-success',
         )) ?>
     </div>
-
+    
     <?= CHtml::endForm() ?>
 </div>

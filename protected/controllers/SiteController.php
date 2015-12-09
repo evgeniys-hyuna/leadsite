@@ -112,7 +112,28 @@ class SiteController extends Controller {
 
         if (($postKeywordForm = Yii::app()->request->getParam('KeywordForm'))) {
             $keywords = array();
+            $keywordIds = array();
+            $tagIds = array();
             
+            // Handle Category
+            if (isset($postKeywordForm['category'])) {
+                foreach ($postKeywordForm['category'] as $c) {
+                    if (!($tag = Tag::model()->find('name = :name', array(
+                        ':name' => $c,
+                    )))) {
+                        $tag = new Tag();
+                        $tag->name = $c;
+
+                        if (!$tag->save()) {
+                            throw new Exception('Can\'t save tag. ' . print_r($tag->getErrors(), true));
+                        }
+                    }
+
+                    $tagIds[] = $tag->id;
+                }
+            }
+            
+            // Handle Keywords
             if (count($keywords = explode(PHP_EOL, $postKeywordForm['keywords'])) <= 1) {
                 $keywords = array($postKeywordForm['keywords']);
             }
@@ -137,12 +158,24 @@ class SiteController extends Controller {
 
                 $newKeyword = new Keyword();
                 $newKeyword->name = $k;
-                $newKeyword->category_id = $postKeywordForm['category_id'];
+//                $newKeyword->category_id = $postKeywordForm['category_id'];
                 $newKeyword->search_engine = $postKeywordForm['searchEngine'];
                 $newKeyword->period = $postKeywordForm['period'];
 
                 if (!$newKeyword->save()) {
                     throw new Exception(print_r($newKeyword->getErrors(), true));
+                }
+                
+                $keywordIds[] = $newKeyword->id;
+            }
+            
+            // Handle relations
+            foreach ($keywordIds as $k) {
+                foreach ($tagIds as $t) {
+                    Yii::app()->db->createCommand()->insert('lds_keyword_tag', array(
+                        'keyword_id' => $k,
+                        'tag_id' => $t,
+                    ));
                 }
             }
             
@@ -353,6 +386,36 @@ class SiteController extends Controller {
                 throw new Exception(print_r($keyword->getErrors(), true));
             }
             
+            if (($postTags = Yii::app()->request->getPost('KeywordTags'))) {
+                $tagIds = array();
+                
+                Yii::app()->db->createCommand()->delete('lds_keyword_tag', 'keyword_id = :keyword_id', array(
+                    ':keyword_id' => $keywordId,
+                ));
+                
+                foreach ($postTags as $t) {
+                    if (!($tag = Tag::model()->find('name = :name', array(
+                        ':name' => $t,
+                    )))) {
+                        $tag = new Tag();
+                        $tag->name = $t;
+
+                        if (!$tag->save()) {
+                            throw new Exception('Can\'t save tag. ' . print_r($tag->getErrors(), true));
+                        }
+                    }
+
+                    $tagIds[] = $tag->id;
+                }
+                
+                foreach ($tagIds as $t) {
+                    Yii::app()->db->createCommand()->insert('lds_keyword_tag', array(
+                        'keyword_id' => $keywordId,
+                        'tag_id' => $t,
+                    ));
+                }
+            }
+            
             $this->redirect(Yii::app()->createUrl('site/keywords'));
         }
         
@@ -437,6 +500,49 @@ class SiteController extends Controller {
         }
         
         echo CJSON::encode($result);
+    }
+    
+    public function actionTags() {
+        $tag = new Tag();
+        
+        if (($postTag = Yii::app()->request->getParam('Tag'))) {
+            $tag->setAttributes($postTag);
+            
+            if (!$tag->save()) {
+                throw new Exception(print_r($tag->getErrors(), true));
+            }
+            
+            $this->refresh();
+        }
+        
+        $this->render('tags', array(
+            'tag' => $tag,
+        ));
+    }
+    
+    public function actionTagDetails($tagId) {
+        $tag = Tag::model()->findByPk($tagId);
+        
+        if (($postTag = Yii::app()->request->getParam('Tag'))) {
+            $tag->setAttributes($postTag);
+            $tag->update();
+            
+            $this->refresh();
+        }
+        
+        $this->render('tag_details', array(
+            'tag' => $tag,
+        ));
+    }
+    
+    public function actionTagDelete($tagId) {
+        Yii::app()->db->createCommand()->delete('lds_keyword_tag', 'tag_id = :tag_id', array(
+            ':tag_id' => $tagId,
+        ));
+        
+        Tag::model()->deleteByPk($tagId);
+        
+        $this->redirect(Yii::app()->createUrl('site/tags'));
     }
 
 }

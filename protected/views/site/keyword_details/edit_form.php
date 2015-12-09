@@ -10,12 +10,20 @@
     </div>
     
     <div class="row">
-        <?= CHtml::label('Category', 'ddlCategory') ?>
+        <?= CHtml::label('Tags', 'slzCategory') ?>
         
-        <?= CHtml::activeDropDownList($keyword, 'category_id', CHtml::listData(Category::model()->findAll(), 'id', 'name'), array(
-            'id' => 'ddlCategory',
-            'prompt' => 'uncategorized',
-        )) ?>
+        <?php
+        $this->widget('ext.yii-selectize.YiiSelectize', array(
+            'name' => 'KeywordTags',
+            'data' => CHtml::listData(Tag::model()->findAll(), 'name', 'name'),
+            'selectedValues' => CHtml::listData($keyword->tags, 'name', 'name'),
+            'fullWidth' => true,
+            'htmlOptions' => array(
+                'id' => 'slzCategory',
+            ),
+            'multiple' => true,
+        ));
+        ?>
     </div>
 
     <div class="row">

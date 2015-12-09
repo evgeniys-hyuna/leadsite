@@ -40,21 +40,41 @@
                 ), ucwords(str_replace('_', ' ', $e->status)));
             },
         ),
+//        array(
+//            'name' => 'category_id',
+//            'header' => 'Category',
+//            'type' => 'raw',
+//            'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
+//            'value' => function ($e) {
+//                if ($e->category) {
+//                    return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
+//                        'categoryId' => $e->category_id,
+//                    )), array(
+//                        'title' => $e->category->description,
+//                    ));
+//                } else {
+//                    return '<i style="color: #afafaf;">-uncategorized-</i>';
+//                }
+//            },
+//        ),
         array(
-            'name' => 'category_id',
-            'header' => 'Category',
+            'header' => 'Tags',
             'type' => 'raw',
-            'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
             'value' => function ($e) {
-                if ($e->category) {
-                    return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
-                        'categoryId' => $e->category_id,
+                $html = '';
+                
+                foreach ($e->tags as $t) {
+                    $html .= CHtml::link(String::build('<span class="label label-info">{name}</span>', array(
+                        'name' => $t->name,
+                    )), Yii::app()->createUrl('site/tagDetails', array(
+                        'tagId' => $t->id,
                     )), array(
-                        'title' => $e->category->description,
+                        'title' => $t->description,
+                        'style' => 'margin-right: 5px;',
                     ));
-                } else {
-                    return '<i style="color: #afafaf;">-uncategorized-</i>';
                 }
+                
+                return $html;
             },
         ),
     ),

@@ -501,5 +501,48 @@ class SiteController extends Controller {
         
         echo CJSON::encode($result);
     }
+    
+    public function actionTags() {
+        $tag = new Tag();
+        
+        if (($postTag = Yii::app()->request->getParam('Tag'))) {
+            $tag->setAttributes($postTag);
+            
+            if (!$tag->save()) {
+                throw new Exception(print_r($tag->getErrors(), true));
+            }
+            
+            $this->refresh();
+        }
+        
+        $this->render('tags', array(
+            'tag' => $tag,
+        ));
+    }
+    
+    public function actionTagDetails($tagId) {
+        $tag = Tag::model()->findByPk($tagId);
+        
+        if (($postTag = Yii::app()->request->getParam('Tag'))) {
+            $tag->setAttributes($postTag);
+            $tag->update();
+            
+            $this->refresh();
+        }
+        
+        $this->render('site/tag_details', array(
+            'tag' => $tag,
+        ));
+    }
+    
+    public function actionTagDelete($tagId) {
+        Yii::app()->db->createCommand()->delete('lds_keyword_tag', 'tag_id = :tag_id', array(
+            ':tag_id' => $tagId,
+        ));
+        
+        Tag::model()->deleteByPk($tagId);
+        
+        $this->redirect(Yii::app()->createUrl('site/tags'));
+    }
 
 }

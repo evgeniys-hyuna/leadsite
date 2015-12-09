@@ -64,6 +64,7 @@ class Keyword extends CActiveRecord {
         // class name for the relations automatically generated below.
         return array(
             'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
+            'tags' => array(self::MANY_MANY, 'Tag', 'lds_keyword_tag(keyword_id, tag_id)'),
         );
     }
 

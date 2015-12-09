@@ -64,8 +64,13 @@
                 $html = '';
                 
                 foreach ($e->tags as $t) {
-                    $html .= String::build('<span class="label label-info">{name}</span>&nbsp;', array(
+                    $html .= CHtml::link(String::build('<span class="label label-info">{name}</span>', array(
                         'name' => $t->name,
+                    )), Yii::app()->createUrl('site/tagDetails', array(
+                        'tagId' => $t->id,
+                    )), array(
+                        'title' => $t->description,
+                        'style' => 'margin-right: 5px;',
                     ));
                 }
                 

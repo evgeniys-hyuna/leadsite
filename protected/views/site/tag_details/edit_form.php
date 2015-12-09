@@ -18,8 +18,14 @@
     </div>
 
     <div class="row">
-        <?= Chtml::submitButton('Add', array(
+        <?= Chtml::submitButton('Save', array(
             'class' => 'btn btn-success',
+        )) ?>
+
+        <?= CHtml::button('Delete', array(
+            'class' => 'btn btn-danger',
+            'data-toggle' => 'modal',
+            'data-target' => '#mdlDeleteTag',
         )) ?>
     </div>
 

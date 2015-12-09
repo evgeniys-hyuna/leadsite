@@ -114,8 +114,4 @@ class Tag extends CActiveRecord {
         return parent::beforeSave();
     }
     
-    public function searchKeywords() {
-        
-    }
-    
 }

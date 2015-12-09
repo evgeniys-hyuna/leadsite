@@ -530,7 +530,7 @@ class SiteController extends Controller {
             $this->refresh();
         }
         
-        $this->render('site/tag_details', array(
+        $this->render('tag_details', array(
             'tag' => $tag,
         ));
     }

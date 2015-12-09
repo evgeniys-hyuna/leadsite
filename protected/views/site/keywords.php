@@ -34,9 +34,9 @@ $this->pageTitle=Yii::app()->name;
             <h3 class="panel-title">Keywords</h3>
         </div>
         <div class="panel-body">
-            <?= $this->renderPartial(Yii::app()->params['siteView'] . 'keywords.category_form', array(
+<!--            </?= $this->renderPartial(Yii::app()->params['siteView'] . 'keywords.category_form', array(
                 'categorySuggestForm' => $categorySuggestForm,
-            )); ?>
+            )); ?>-->
             
             <?= $this->renderPartial(Yii::app()->params['siteView'] . 'keywords.keywords_grid', array(
                 'keyword' => $keyword,

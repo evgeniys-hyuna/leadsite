@@ -40,23 +40,23 @@
                 ), ucwords(str_replace('_', ' ', $e->status)));
             },
         ),
-        array(
-            'name' => 'category_id',
-            'header' => 'Category',
-            'type' => 'raw',
-            'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
-            'value' => function ($e) {
-                if ($e->category) {
-                    return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
-                        'categoryId' => $e->category_id,
-                    )), array(
-                        'title' => $e->category->description,
-                    ));
-                } else {
-                    return '<i style="color: #afafaf;">-uncategorized-</i>';
-                }
-            },
-        ),
+//        array(
+//            'name' => 'category_id',
+//            'header' => 'Category',
+//            'type' => 'raw',
+//            'filter' => CHtml::listData(Category::model()->findAll(), 'id', 'name'),
+//            'value' => function ($e) {
+//                if ($e->category) {
+//                    return CHtml::link($e->category->name, Yii::app()->createUrl('site/category', array(
+//                        'categoryId' => $e->category_id,
+//                    )), array(
+//                        'title' => $e->category->description,
+//                    ));
+//                } else {
+//                    return '<i style="color: #afafaf;">-uncategorized-</i>';
+//                }
+//            },
+//        ),
         array(
             'header' => 'Tags',
             'type' => 'raw',

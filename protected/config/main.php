@@ -25,6 +25,7 @@ return array(
             'ipFilters' => array(), // '127.0.0.1','::1'
             'generatorPaths' => array('bootstrap.gii'),
         ),
+        'EmailReporter',
     ),
     // application components
     'components' => array(
@@ -65,9 +66,6 @@ return array(
              */
             ),
         ),
-    ),
-    'modules' => array(
-        'EmailReporter',
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']

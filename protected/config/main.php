@@ -66,6 +66,9 @@ return array(
             ),
         ),
     ),
+    'modules' => array(
+        'EmailReporter',
+    ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
     'params' => array(

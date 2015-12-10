@@ -46,14 +46,14 @@
                 'value' => function ($e) {
                     $links = '';
 
-                    if ((time() - strtotime($e->last_send_at)) > 600) {
+//                    if ((time() - strtotime($e->last_send_at)) > 600) {
                         $links .= CHtml::link('Send Now', Yii::app()->createUrl('site/reportsSend', array(
                             'reportId' => $e->id,
                         )), array(
                             'class' => 'btn-sm btn-info',
                             'onclick' => 'btnSendNowClick(this)',
                         )) . '&nbsp;';
-                    }
+//                    }
 
                     return $links;
                 },

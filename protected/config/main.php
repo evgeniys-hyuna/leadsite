@@ -73,5 +73,6 @@ return array(
         // this is used in contact page
         'adminEmail' => 'webmaster@example.com',
         'siteView' => 'webroot.protected.views.site.',
+        'emailReporterView' => 'webroot.protected.modules.EmailReporter.views.default.',
     ),
 );

@@ -44,7 +44,7 @@ class EmailReportType extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-            'ldsEmailReporters' => array(self::MANY_MANY, 'EmailReporter', 'lds_email_reporter_report_type(email_report_type_id, email_reporter_id)'),
+            'emailReporters' => array(self::MANY_MANY, 'EmailReporter', 'lds_email_reporter_report_type(email_report_type_id, email_reporter_id)'),
         );
     }
 

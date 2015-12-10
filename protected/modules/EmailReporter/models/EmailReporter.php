@@ -50,9 +50,9 @@ class EmailReporter extends CActiveRecord {
         // class name for the relations automatically generated below.
         return array(
             'emailPeriod' => array(self::BELONGS_TO, 'EmailPeriod', 'email_period_id'),
-            'ldsEmails' => array(self::MANY_MANY, 'Email', 'lds_email_reporter_email(email_reporter_id, email_id)'),
-            'ldsEmailReportTypes' => array(self::MANY_MANY, 'EmailReportType', 'lds_email_reporter_report_type(email_reporter_id, email_report_type_id)'),
-            'ldsTags' => array(self::MANY_MANY, 'Tag', 'lds_email_reporter_tag(email_reporter_id, tag_id)'),
+            'emails' => array(self::MANY_MANY, 'Email', 'lds_email_reporter_email(email_reporter_id, email_id)'),
+            'emailReportTypes' => array(self::MANY_MANY, 'EmailReportType', 'lds_email_reporter_report_type(email_reporter_id, email_report_type_id)'),
+            'tags' => array(self::MANY_MANY, 'Tag', 'lds_email_reporter_tag(email_reporter_id, tag_id)'),
         );
     }
 

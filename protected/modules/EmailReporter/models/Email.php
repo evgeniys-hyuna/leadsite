@@ -43,7 +43,7 @@ class Email extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-            'ldsEmailReporters' => array(self::MANY_MANY, 'EmailReporter', 'lds_email_reporter_email(email_id, email_reporter_id)'),
+            'emailReporters' => array(self::MANY_MANY, 'EmailReporter', 'lds_email_reporter_email(email_id, email_reporter_id)'),
         );
     }
 

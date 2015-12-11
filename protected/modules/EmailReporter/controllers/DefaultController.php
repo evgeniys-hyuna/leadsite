@@ -18,15 +18,16 @@ class DefaultController extends Controller {
         $emailReporterForm->selectionPeriod = 0;
         $emailReporterForm->isUpdatedOnly = true;
         
-//        CVarDumper::dump($_GET, 10, true);
-//        CVarDumper::dump($_POST, 10, true);
-        
         if (($postEmailReporterForm = Yii::app()->request->getParam('EmailReporterForm'))) {
             $emailReporterForm->setAttributes($postEmailReporterForm);
             
-            $emailReporterForm->validate();
+            if ($emailReporterForm->save()) {
+                $this->redirect(Yii::app()->createUrl('EmailReporter/default/index'));
+            }
         }
         
+        $emailReporterForm->updatePeriodType = null;
+
         $this->render('add', array(
             'emailReporterForm' => $emailReporterForm,
         ));

@@ -112,5 +112,16 @@ class EmailReporter extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
+    
+    public function beforeSave() {
+        if ($this->isNewRecord) {
+            $date = date(Time::FORMAT_STANDART);
+            $this->last_sent_at = $date;
+            $this->created_at = $date;
+            $this->updated_at = $date;
+        }
+        
+        return parent::beforeSave();
+    }
 
 }

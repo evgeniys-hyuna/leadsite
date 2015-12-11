@@ -93,5 +93,41 @@ class Email extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
+    
+    public function bindToEmailReporter($emailReporterId) {
+        if ($this->isNewRecord) {
+            throw new Exception('Can\'t bind unexisting model');
+        }
+        
+        if (!EmailReporter::model()->exists('id = :id', array(
+            ':id' => $emailReporterId,
+        ))) {
+            throw new Exception('EmailReporter does not exists: ' . $emailReporterId);
+        }
+        
+        if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_email')->queryScalar(array(
+            'email_reporter_id' => $emailReporterId,
+            'email_id' => $this->id,
+        ))) {
+            return;
+        }
+        
+        Yii::app()->db->createCommand()->insert('lds_email_reporter_email', array(
+            'email_reporter_id' => $emailReporterId,
+            'email_id' => $this->id,
+        ));
+    }
+    
+    public function unbindFromEmailReporter($emailReporterId) {
+        if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_email')->queryScalar(array(
+            'email_reporter_id' => $emailReporterId,
+            'email_id' => $this->id,
+        ))) {
+            Yii::app()->db->createCommand()->delete('lds_email_reporter_email', 'email_reporter_id = :email_reporter_id AND email_id = :email_id', array(
+                ':email_reporter_id' => $emailReporterId,
+                ':email_id' => $this->id,
+            ));
+        }
+    }
 
 }

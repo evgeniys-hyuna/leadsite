@@ -21,25 +21,13 @@
     <div class="row">
         <?= CHtml::activeLabel($emailReporterForm, 'reportTypes') ?>
 
-        <?php
-        $this->widget('ext.select2.ESelect2', array(
-            'model' => $emailReporterForm,
-            'attribute' => 'reportTypes',
-            'data' => CHtml::listData(EmailReportType::model()->findAll(), 'id', 'name'),
-            'htmlOptions' => array(
-                'multiple' => 'multiple',
-                'style' => 'width: 300px;',
-            ),
-        ));
-//        $this->widget('ext.yii-selectize.YiiSelectize', array(
-//            'model' => $emailReporterForm,
-//            'attribute' => 'reportTypes',
-//            'data' => CHtml::listData(EmailReportType::model()->findAll(), 'id', 'name'),
-//            'fullWidth' => false,
-//            'multiple' => true,
-//        ));
-        ?>
-        
+        <div class="row">
+            <?= CHtml::activeCheckBoxList($emailReporterForm, 'reportTypes', CHtml::listData(EmailReportType::model()->findAll(), 'id', 'name'), array(
+                'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                'separator' => '',
+            )) ?>
+        </div>
+
         <?= CHtml::error($emailReporterForm, 'reportTypes') ?>
     </div>
     
@@ -85,6 +73,10 @@
     
     <div class="row">
         <?= CHtml::activeLabel($emailReporterForm, 'selectionPeriod') ?>
+        
+        <p><i>Here you can set keyword selection certain period in seconds. 
+            Like, to select keywords for last day, use value <b><?= Time::SECONDS_IN_DAY ?></b>. 
+            Value <b>0</b> means auto-period from last update.</i></p>
 
         <?= CHtml::activeTextField($emailReporterForm, 'selectionPeriod') ?>
         
@@ -101,14 +93,18 @@
     
     <div class="row">
         <?= CHtml::activeLabel($emailReporterForm, 'selectionTags') ?>
+        
+        <p><i>Blank value will select all keywords.</i></p>
 
         <?php
-        $this->widget('ext.yii-selectize.YiiSelectize', array(
+        $this->widget('ext.select2.ESelect2', array(
             'model' => $emailReporterForm,
             'attribute' => 'selectionTags',
             'data' => CHtml::listData(Tag::model()->findAll(), 'id', 'name'),
-            'fullWidth' => false,
-            'multiple' => true,
+            'htmlOptions' => array(
+                'multiple' => 'multiple',
+                'style' => 'width: 300px;',
+            ),
         ));
         ?>
         

@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'lds_email_period':
  * @property integer $id
  * @property string $name
+ * @property int $email_period_type_id
  * @property string $value
  *
  * The followings are the available model relations:

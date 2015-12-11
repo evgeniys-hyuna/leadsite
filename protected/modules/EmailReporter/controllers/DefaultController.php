@@ -14,6 +14,10 @@ class DefaultController extends Controller {
     
     public function actionAdd() {
         $emailReporterForm = new EmailReporterForm();
+        
+        $emailReporterForm->selectionPeriod = 0;
+        $emailReporterForm->isUpdatedOnly = true;
+        
 //        CVarDumper::dump($_GET, 10, true);
 //        CVarDumper::dump($_POST, 10, true);
         

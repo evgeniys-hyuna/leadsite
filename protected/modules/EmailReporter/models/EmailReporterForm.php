@@ -19,18 +19,34 @@ class EmailReporterForm extends CFormModel {
     public $updatePeriodValueDates;
     public $updatePeriodValueMonths;
     public $selectionPeriod;
+    public $isUpdatedOnly;
     public $selectionTags;
     
     public function rules() {
         return array(
-            array('email', 'email'),
             array('email', 'safe'),
         );
     }
     
-//    public function validate($attributes = null, $clearErrors = true) {
-//        
-//        
-//        return parent::validate($attributes, $clearErrors);
-//    }
+    public function attributeLabels() {
+        return array(
+            'email' => 'Emails',
+            'reportTypes' => 'Report Types',
+            'updatePeriodType' => 'Update By',
+            'updatePeriodValueDays' => '',
+            'updatePeriodValueDates' => '',
+            'updatePeriodValueMonths' => '',
+            'selectionPeriod' => 'Selection Period',
+            'isUpdatedOnly' => 'Updated Only',
+            'selectionTags' => 'Selection Tags',
+        );
+    }
+    
+    public function validate($attributes = null, $clearErrors = true) {
+        CVarDumper::dump($attributes, 10, true);
+        die('Debug Point' . PHP_EOL);
+        
+        return parent::validate($attributes, false);
+    }
+    
 }

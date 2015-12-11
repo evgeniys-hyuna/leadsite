@@ -8,6 +8,7 @@
  * @property string $last_sent_at
  * @property integer $email_period_id
  * @property string $selection_period
+ * @property boolean $is_updated_only
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
@@ -65,6 +66,7 @@ class EmailReporter extends CActiveRecord {
             'last_sent_at' => 'Last Sent At',
             'email_period_id' => 'Email Period',
             'selection_period' => 'Selection Period',
+            'is_updated_only' => 'Updated Only',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',

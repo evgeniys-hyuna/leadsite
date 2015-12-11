@@ -2,15 +2,16 @@
 
 <div class="form">
     <div class="row">
-        <?= CHtml::label('Email', 'acpEmail') ?>
+        <?= CHtml::activeLabel($emailReporterForm, 'email') ?>
 
         <?php
         $this->widget('ext.yii-selectize.YiiSelectize', array(
             'model' => $emailReporterForm,
             'attribute' => 'email',
             'data' => CHtml::listData(Email::model()->findAll(), 'id', 'name'),
+            'selectedValues' => array('list', 'data'),
             'fullWidth' => false,
-            'multiple' => false,
+            'multiple' => true,
         ));
         ?>
         
@@ -21,13 +22,22 @@
         <?= CHtml::activeLabel($emailReporterForm, 'reportTypes') ?>
 
         <?php
-        $this->widget('ext.yii-selectize.YiiSelectize', array(
+        $this->widget('ext.select2.ESelect2', array(
             'model' => $emailReporterForm,
             'attribute' => 'reportTypes',
             'data' => CHtml::listData(EmailReportType::model()->findAll(), 'id', 'name'),
-            'fullWidth' => false,
-            'multiple' => true,
+            'htmlOptions' => array(
+                'multiple' => 'multiple',
+                'style' => 'width: 300px;',
+            ),
         ));
+//        $this->widget('ext.yii-selectize.YiiSelectize', array(
+//            'model' => $emailReporterForm,
+//            'attribute' => 'reportTypes',
+//            'data' => CHtml::listData(EmailReportType::model()->findAll(), 'id', 'name'),
+//            'fullWidth' => false,
+//            'multiple' => true,
+//        ));
         ?>
         
         <?= CHtml::error($emailReporterForm, 'reportTypes') ?>
@@ -36,35 +46,73 @@
     <div class="row">
         <?= CHtml::activeLabel($emailReporterForm, 'updatePeriodType') ?>
 
-        <?= CHtml::activeDropDownList($emailReporterForm, 'updatePeriodType', CHtml::listData(EmailPeriodType::model()->findAll(), 'id', 'name')) ?>
+        <?= CHtml::activeDropDownList($emailReporterForm, 'updatePeriodType', CHtml::listData(EmailPeriodType::model()->findAll(), 'id', 'name'), array(
+            'id' => 'ddlUpdatePeriodType',
+            'prompt' => 'select',
+        )) ?>
         
         <?= CHtml::error($emailReporterForm, 'updatePeriodType') ?>
     </div>
     
-    <div class="row">
-        <div class="col-md-12">
-            <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDays', array(
-                'Sun', 
-                'Mon', 
-                'Tue', 
-                'Wed', 
-                'Thu', 
-                'Fri', 
-                'Sat',
-            ), array(
-                'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
-                'separator' => '',
-            )) ?>
+    <div class="row period-pick" style="width: 400px;">
+        <div class="row period-days-of-the-week" style="display: none;">
+            <div class="col-md-12">
+                <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDays', Time::getDaysOfTheWeek(false, true), array(
+                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'separator' => '',
+                )) ?>
+            </div>
+        </div>
+
+        <div class="row period-dates-of-the-months" style="display: none;">
+            <div class="col-md-12">
+                <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDates', Time::getDatesOfTheMonth(), array(
+                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'separator' => '',
+                )) ?>
+            </div>
+        </div>
+
+        <div class="row period-months-of-the-year" style="width: 350px; display: none;">
+            <div class="col-md-12">
+                <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueMonths', Time::getMonthsOfTheYear(false, true), array(
+                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'separator' => '',
+                )) ?>
+            </div>
         </div>
     </div>
     
     <div class="row">
-        <div class="col-md-12">
-            <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDates', range(1, 31), array(
-                'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
-                'separator' => '',
-            )) ?>
-        </div>
+        <?= CHtml::activeLabel($emailReporterForm, 'selectionPeriod') ?>
+
+        <?= CHtml::activeTextField($emailReporterForm, 'selectionPeriod') ?>
+        
+        <?= CHtml::error($emailReporterForm, 'selectionPeriod') ?>
+    </div>
+    
+    <div class="row">
+        <?= CHtml::activeLabel($emailReporterForm, 'isUpdatedOnly') ?>
+
+        <?= CHtml::activeCheckBox($emailReporterForm, 'isUpdatedOnly') ?>
+        
+        <?= CHtml::error($emailReporterForm, 'isUpdatedOnly') ?>
+    </div>
+    
+    <div class="row">
+        <?= CHtml::activeLabel($emailReporterForm, 'selectionTags') ?>
+
+        <?php
+        $this->widget('ext.yii-selectize.YiiSelectize', array(
+            'model' => $emailReporterForm,
+            'attribute' => 'selectionTags',
+            'data' => CHtml::listData(Tag::model()->findAll(), 'id', 'name'),
+            'fullWidth' => false,
+            'multiple' => true,
+        ));
+        ?>
+        
+        <?= CHtml::error($emailReporterForm, 'selectionTags') ?>
     </div>
 
     <div class="row">
@@ -75,3 +123,34 @@
 </div>
 
 <?= CHtml::endForm() ?>
+
+<script type="text/javascript">
+
+$("#ddlUpdatePeriodType").change(function () {
+    var animationSpeed = 200;
+    
+    switch ($(this).val()) {
+        case "1":
+            $(".period-days-of-the-week").show(animationSpeed);
+            $(".period-dates-of-the-months").hide(animationSpeed);
+            $(".period-months-of-the-year").hide(animationSpeed);
+            break;
+        case "2":
+            $(".period-days-of-the-week").hide(animationSpeed);
+            $(".period-dates-of-the-months").show(animationSpeed);
+            $(".period-months-of-the-year").hide(animationSpeed);
+            break;
+        case "3":
+            $(".period-days-of-the-week").hide(animationSpeed);
+            $(".period-dates-of-the-months").hide(animationSpeed);
+            $(".period-months-of-the-year").show(animationSpeed);
+            break;
+        default:
+            $(".period-days-of-the-week").hide(animationSpeed);
+            $(".period-dates-of-the-months").hide(animationSpeed);
+            $(".period-months-of-the-year").hide(animationSpeed);
+            break;
+    }
+});
+
+</script>

@@ -96,7 +96,7 @@ class EmailReporter extends CActiveRecord {
         $criteria->compare('selection_period', $this->selection_period, true);
         $criteria->compare('created_at', $this->created_at, true);
         $criteria->compare('updated_at', $this->updated_at, true);
-        $criteria->compare('deleted_at', $this->deleted_at, true);
+        $criteria->addCondition('deleted_at IS NULL');
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -153,13 +153,5 @@ class EmailReporter extends CActiveRecord {
         
         return $result;
     }
-    
-//    public function clearEmails() {
-//        Yii::app()->db->createCommand()->delete('lds_email_reporter_email', 'email_reporter_id = :email_reporter_id', array(
-//            ':email_reporter_id' => $this->id,
-//        ));
-//        
-//        return true;
-//    }
 
 }

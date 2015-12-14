@@ -9,7 +9,7 @@
                 <p>Delete current email reporter?</p>
             </div>
             <div class="modal-footer">
-                <?= CHtml::link('Delete', Yii::app()->createUrl('site/keywordDelete', array(
+                <?= CHtml::link('Delete', Yii::app()->createUrl('/EmailReporter/default/delete', array(
                     'emailReporterId' => $emailReporter->id,
                 )), array(
                     'class' => 'btn btn-danger',

@@ -64,4 +64,12 @@ class DefaultController extends Controller {
         ));
     }
     
+    public function actionDelete($emailReporterId) {
+        $emailReporter = EmailReporter::model()->findByPk($emailReporterId);
+        $emailReporter->deleted_at = date(Time::FORMAT_STANDART);
+        $emailReporter->update();
+        
+        $this->redirect(Yii::app()->createUrl('/EmailReporter/default/index'));
+    }
+    
 }

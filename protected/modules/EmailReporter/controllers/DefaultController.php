@@ -4,15 +4,6 @@ class DefaultController extends Controller {
 
     public function actionIndex() {
         $emailReporter = new EmailReporter();
-        
-        
-        
-        $this->render('index', array(
-            'emailReporter' => $emailReporter,
-        ));
-    }
-    
-    public function actionAdd() {
         $emailReporterForm = new EmailReporterForm();
         
         $emailReporterForm->selectionPeriod = 0;
@@ -22,13 +13,14 @@ class DefaultController extends Controller {
             $emailReporterForm->setAttributes($postEmailReporterForm);
             
             if ($emailReporterForm->save()) {
-                $this->redirect(Yii::app()->createUrl('EmailReporter/default/index'));
+                $this->refresh();
             }
         }
         
         $emailReporterForm->updatePeriodType = null;
-
-        $this->render('add', array(
+        
+        $this->render('index', array(
+            'emailReporter' => $emailReporter,
             'emailReporterForm' => $emailReporterForm,
         ));
     }

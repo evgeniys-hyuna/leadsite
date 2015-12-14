@@ -123,5 +123,25 @@ class EmailReporter extends CActiveRecord {
         
         return parent::beforeSave();
     }
+    
+    public function getEmails() {
+        $result = array();
+        
+        foreach ($this->emails as $e) {
+            $result[] = $e->address;
+        }
+        
+        return $result;
+    }
+    
+    public function getEmailReportTypes() {
+        $result = array();
+        
+        foreach ($this->emailReportTypes as $t) {
+            $result[] = $t->name;
+        }
+        
+        return $result;
+    }
 
 }

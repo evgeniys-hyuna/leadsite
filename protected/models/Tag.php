@@ -127,7 +127,7 @@ class Tag extends CActiveRecord {
         
         if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_tag')->queryScalar(array(
             'email_reporter_id' => $emailReporterId,
-            'tag_id' => $$this->id,
+            'tag_id' => $this->id,
         ))) {
             return;
         }
@@ -141,11 +141,11 @@ class Tag extends CActiveRecord {
     public function unbindFromEmailReporter($emailReporterId) {
         if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_tag')->queryScalar(array(
             'email_reporter_id' => $emailReporterId,
-            'tag_id' => $$this->id,
+            'tag_id' => $this->id,
         ))) {
             Yii::app()->db->createCommand()->delete('lds_email_reporter_tag', 'email_reporter_id = :email_reporter_id AND tag_id = :tag_id', array(
                 ':email_reporter_id' => $emailReporterId,
-                ':tag_id' => $$this->id,
+                ':tag_id' => $this->id,
             ));
         }
     }

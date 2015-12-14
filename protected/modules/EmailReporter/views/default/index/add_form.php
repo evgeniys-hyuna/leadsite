@@ -8,9 +8,9 @@
         $this->widget('ext.yii-selectize.YiiSelectize', array(
             'model' => $emailReporterForm,
             'attribute' => 'email',
-            'data' => CHtml::listData(Email::model()->findAll(), 'id', 'name'),
-            'selectedValues' => array('list', 'data'),
-            'fullWidth' => false,
+            'data' => CHtml::listData(Email::model()->findAll(), 'id', 'address'),
+//            'selectedValues' => $emailReporterForm->email,
+            'fullWidth' => true,
             'multiple' => true,
         ));
         ?>
@@ -42,11 +42,11 @@
         <?= CHtml::error($emailReporterForm, 'updatePeriodType') ?>
     </div>
     
-    <div class="row period-pick" style="width: 400px;">
+    <div class="row period-pick" style="width: 320px;">
         <div class="row period-days-of-the-week" style="display: none;">
             <div class="col-md-12">
                 <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDays', Time::getDaysOfTheWeek(false, true), array(
-                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'template' => '<div style="width: 40px; float: left; text-align:center;">{input} {label}</div>',
                     'separator' => '',
                 )) ?>
             </div>
@@ -55,16 +55,16 @@
         <div class="row period-dates-of-the-months" style="display: none;">
             <div class="col-md-12">
                 <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueDates', Time::getDatesOfTheMonth(), array(
-                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'template' => '<div style="width: 40px; float: left; text-align:center;">{input} {label}</div>',
                     'separator' => '',
                 )) ?>
             </div>
         </div>
 
-        <div class="row period-months-of-the-year" style="width: 350px; display: none;">
+        <div class="row period-months-of-the-year" style="display: none;">
             <div class="col-md-12">
                 <?= CHtml::activeCheckBoxList($emailReporterForm, 'updatePeriodValueMonths', Time::getMonthsOfTheYear(false, true), array(
-                    'template'=>'<div style="width: 50px; float: left; text-align:center;">{input} {label}</div>',
+                    'template' => '<div style="width: 40px; float: left; text-align:center;">{input} {label}</div>',
                     'separator' => '',
                 )) ?>
             </div>

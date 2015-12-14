@@ -194,6 +194,8 @@ class EmailReporterForm extends CFormModel {
             }
             
             $transaction->commit();
+            
+            return true;
         } catch (Exception $ex) {
             $transaction->rollback();
 

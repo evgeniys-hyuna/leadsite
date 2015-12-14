@@ -1,9 +1,5 @@
 <?php
 /* @var $this DefaultController */
-
-$this->breadcrumbs=array(
-	$this->module->id,
-);
 ?>
 
 <div class="col-md-4">

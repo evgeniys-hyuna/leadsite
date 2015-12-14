@@ -115,6 +115,10 @@
         <?= CHtml::submitButton('Add', array(
             'class' => 'btn btn-success',
         )) ?>
+
+        <?= CHtml::link('Browse', Yii::app()->createUrl('site/reportsBrowse'), array(
+            'class' => 'btn btn-info',
+        )) ?>
     </div>
 </div>
 

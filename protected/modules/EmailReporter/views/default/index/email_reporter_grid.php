@@ -7,7 +7,7 @@
             'header' => 'Email',
             'type' => 'raw',
             'value' => function ($e) {
-                return CHtml::link(implode(', ', $e->getEmails()), Yii::app()->createUrl('/EmailReporter/default/index'));
+                return implode(', ', $e->getEmails());
             }
         ),
         array(

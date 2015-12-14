@@ -67,6 +67,7 @@
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Reports', Yii::app()->createUrl('/site/reports')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
                     'EmailReporter/index',
+                    'EmailReporter/edit',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Email Reporter', Yii::app()->createUrl('EmailReporter/default/index')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
                     'ignoreList',

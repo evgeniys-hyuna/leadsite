@@ -40,6 +40,11 @@
 
             <?php
             $action = Yii::app()->getController()->getAction()->id;
+            
+            if (isset(Yii::app()->getController()->getAction()->controller->module) &&
+                    ($module = Yii::app()->getController()->getAction()->controller->module->id)) {
+                $action = $module . '/' . $action;
+            }
             ?>
             
             <ul class="nav nav-pills">
@@ -60,6 +65,10 @@
                     'reportsBrowse',
                     'reportsDetails',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Reports', Yii::app()->createUrl('/site/reports')) ?></li>
+                <li role="presentation" <?= in_array($action, array(
+                    'EmailReporter/index',
+                    'EmailReporter/edit',
+                )) ? 'class="active"' : '' ?>><?= CHtml::link('Email Reporter', Yii::app()->createUrl('EmailReporter/default/index')) ?></li>
                 <li role="presentation" <?= in_array($action, array(
                     'ignoreList',
                 )) ? 'class="active"' : '' ?>><?= CHtml::link('Ignore List', Yii::app()->createUrl('/site/ignoreList')) ?></li>

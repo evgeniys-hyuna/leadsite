@@ -25,6 +25,7 @@ return array(
             'ipFilters' => array(), // '127.0.0.1','::1'
             'generatorPaths' => array('bootstrap.gii'),
         ),
+        'EmailReporter',
     ),
     // application components
     'components' => array(
@@ -72,5 +73,6 @@ return array(
         // this is used in contact page
         'adminEmail' => 'webmaster@example.com',
         'siteView' => 'webroot.protected.views.site.',
+        'emailReporterView' => 'webroot.protected.modules.EmailReporter.views.default.',
     ),
 );

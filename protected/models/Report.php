@@ -196,7 +196,7 @@ class Report extends CActiveRecord {
         $headers = 'From: noreply@ad-center.com' . PHP_EOL;
         $headers .= 'Content-type: text/html' . PHP_EOL;
 
-        if ($this->email($reportHtml, array(
+        if ($this->sendEmail($reportHtml, array(
             Settings::getValue(Settings::LAST_REPORT_LEADS),
             Settings::getValue(Settings::LAST_REPORT_ALEXA),
         ))) {
@@ -237,6 +237,13 @@ class Report extends CActiveRecord {
         return $reports;
     }
     
+    /**
+     * 
+     * @param type $body
+     * @param type $attachments
+     * @return type
+     * @deprecated since version 1.0
+     */
     private function email($body, $attachments) {
         $uid = md5(uniqid(time()));
         $header = "From: " . Yii::app()->name . " Report <noreply@ad-center.com>\r\n";
@@ -269,6 +276,22 @@ class Report extends CActiveRecord {
         $header .= "--" . $uid . "--";
         
         return mail($this->email, Yii::app()->name . ' Report', "", $header);
+    }
+    
+    private function sendEmail($body, $attachments = array()) {
+        Yii::import('application.extensions.phpmailer.JPhpMailer');
+        
+        $mail = new JPhpMailer();
+        $mail->SetFrom('noreply@ad-center.com');
+        $mail->AddAddress($this->email);
+        $mail->Subject = Yii::app()->name . ' Report';
+        $mail->MsgHTML($body);
+        
+        foreach ($attachments as $a) {
+            $mail->AddAttachment($a);
+        }
+        
+        return $mail->Send();
     }
     
 }

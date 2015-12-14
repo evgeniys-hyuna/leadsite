@@ -12,6 +12,7 @@ return array(
         'application.models.*',
         'application.components.*',
         'application.components.SearchEngine.*',
+        'application.modules.EmailReporter.models.*',
     ),
     // application components
     'components' => array(

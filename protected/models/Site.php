@@ -153,6 +153,7 @@ class Site extends CActiveRecord {
         $criteria->addCondition('keyword.deleted_at IS NULL');
         $criteria->group = 'site.domain';
         $criteria->distinct = true;
+        $criteria->order = 'site.created_at DESC, site.domain ASC';
         $sites = Site::model()->findAll($criteria);
         $sitesCount = count($sites);
         

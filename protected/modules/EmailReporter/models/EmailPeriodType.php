@@ -1,28 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "lds_settings".
+ * This is the model class for table "lds_email_period_type".
  *
- * The followings are the available columns in table 'lds_settings':
+ * The followings are the available columns in table 'lds_email_period_type':
  * @property integer $id
  * @property string $name
- * @property string $value
+ * 
+ * @property array() $emailPeriods
  */
-class Settings extends CActiveRecord {
-    const SIMULTANEOUS_EXECUTORS_LIMIT = 'Simultaneous executors limit';
-    const EXECUTOR_TASK_SEARCH_COOLDOWN = 'Executor task search cooldown';
-    const GOOGLE_SEARCH_COOLDOWN = 'Google search cooldown';
-    const EXECUTOR_TASK_SEARCH_LIMIT = 'Executor task search limit';
-    const ABUSE_COOLDOWN = 'Abuse cooldown';
-    const ALEXA_SEARCH_COOLDOWN = 5;
-    const LAST_REPORT_LEADS = 'Last report Leads';
-    const LAST_REPORT_ALEXA = 'Last report Alexa';
+class EmailPeriodType extends CActiveRecord {
+    const TYPE_DAYS_OF_THE_WEEK = 1;
+    const TYPE_DATES_OF_THE_MONTH = 2;
+    const TYPE_MONTHS_OF_THE_YEAR = 3;
     
     /**
      * @return string the associated database table name
      */
     public function tableName() {
-        return 'lds_settings';
+        return 'lds_email_period_type';
     }
 
     /**
@@ -32,11 +28,12 @@ class Settings extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name, value', 'required'),
-            array('name, value', 'length', 'max' => 128),
+            array('name', 'required'),
+            array('name', 'length', 'max' => 64),
+            array('name', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, value', 'safe', 'on' => 'search'),
+            array('id, name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -47,6 +44,7 @@ class Settings extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'emailPeriods' => array(self::HAS_MANY, 'EmailPeriod', 'email_period_type_id'),
         );
     }
 
@@ -57,7 +55,6 @@ class Settings extends CActiveRecord {
         return array(
             'id' => 'ID',
             'name' => 'Name',
-            'value' => 'Value',
         );
     }
 
@@ -80,7 +77,6 @@ class Settings extends CActiveRecord {
 
         $criteria->compare('id', $this->id);
         $criteria->compare('name', $this->name, true);
-        $criteria->compare('value', $this->value, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -91,45 +87,10 @@ class Settings extends CActiveRecord {
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
      * @param string $className active record class name.
-     * @return Settings the static model class
+     * @return EmailPeriodType the static model class
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
-    }
-    
-    public static function getValue($name) {
-        if (($settings = Settings::model()->findByAttributes(array(
-            'name' => $name,
-        )))) {
-            return $settings->value;
-        }
-        
-        throw new Exception('Can\'t get settings by name ' . $name);
-    }
-    
-    public static function setValue($name, $value) {
-        Yii::app()->db->createCommand()->update('lds_settings', array(
-            'value' => $value,
-        ), 'name = :name', array(
-            ':name' => $name,
-        ));
-//        
-//        
-//        try {
-//            Settings::model()->update(array(
-//                'value' => $value,
-//            ), 'name = :name', array(
-//                ':name' => $name,
-//            ));
-//        } catch (Exception $ex) {
-//            $settings = new Settings();
-//            $settings->name = $name;
-//            $settings->value = $value;
-//            
-//            if (!$settings->save()) {
-//                throw new Exception('Can\'t save settings. ' . print_r($settings->getErrors(), true));
-//            }
-//        }
     }
 
 }

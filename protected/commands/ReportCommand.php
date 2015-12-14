@@ -25,6 +25,20 @@ class ReportCommand extends CConsoleCommand {
     public function actionIndex($isForced = false, $isDebug = false) {
         $console = Console::getInstance($isForced, $isDebug);
         
+        
+//        Yii::import('application.extensions.phpmailer.JPhpMailer');
+//        $mail = new JPhpMailer();
+//        $mail->SetFrom('noreply@domani.com');
+//        $mail->AddAddress('evgeniy.siderka@hyuna.bb');
+//        $mail->MsgHTML('Hello from PHPMailer');
+//        $mail->AddAttachment(Settings::getValue(Settings::LAST_REPORT_ALEXA));
+//        $mail->AddAttachment(Settings::getValue(Settings::LAST_REPORT_LEADS));
+//        
+//        $console->writeLine($mail->Send() ? 'OK' : 'Failed');
+//        
+//        CVarDumper::dump('END', 10, false);
+//        die('Debug Point' . PHP_EOL);
+        
         $console->writeLine('Searching for tasks');
         
         $report = Report::model()->findAll();

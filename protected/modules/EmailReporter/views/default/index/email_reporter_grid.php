@@ -54,5 +54,20 @@
                 return Time::toFormat(Time::FORMAT_DATE_PRETTY, $e->created_at);
             }
         ),
+        array(
+            'header' => 'Action',
+            'type' => 'raw',
+            'value' => function ($e) {
+                $actions = '';
+                
+                $actions .= CHtml::link('Edit', Yii::app()->createUrl('/EmailReporter/default/edit', array(
+                    'emailReporterId' => $e->id,
+                )), array(
+                    'class' => 'btn btn-sm btn-primary',
+                ));
+            
+                return $actions;
+            },
+        ),
     ),
 )) ?>

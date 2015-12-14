@@ -49,14 +49,8 @@ class EmailReporterForm extends CFormModel {
         
         if (is_array($this->email)) {
             foreach ($this->email as $e) {
-                $address = $e;
-                
-                if (is_numeric($e) && ($email = Email::model()->findByPk($e))) {
-                    $address = $email->address;
-                }
-                
-                if (!String::isEmail($address)) {
-                    $this->addError('email', 'Email "' . $address . '" is incorrect');
+                if (!String::isEmail($e)) {
+                    $this->addError('email', 'Email "' . $e . '" is incorrect');
                 }
             }
         } else {
@@ -107,7 +101,7 @@ class EmailReporterForm extends CFormModel {
         return parent::validate($attributes, false);
     }
     
-    public function save() {
+    public function add() {
         if (!$this->validate()) {
             return false;
         }
@@ -161,13 +155,9 @@ class EmailReporterForm extends CFormModel {
             foreach ($this->email as $e) {
                 $email = null;
                 
-                if (is_numeric($e)) {
-                    if (!($email = Email::model()->findByPk($e))) {
-                        throw new Exception('Can\'t save email: ' . $e);
-                    }
-                } else if (!String::isEmail($e)) {
-                    throw new Exception('Can\'t save email: ' . $e);
-                } else {
+                if (!($email = Email::model()->findByAttributes(array(
+                    'address' => $e,
+                )))) {
                     $email = new Email();
                     $email->address = $e;
 
@@ -184,7 +174,9 @@ class EmailReporterForm extends CFormModel {
              */
 
             foreach ($this->reportTypes as $t) {
-                if (($emailReportType = EmailReportType::model()->findByPk($t))) {
+                if (($emailReportType = EmailReportType::model()->findByAttributes(array(
+                    'name' => $t,
+                )))) {
                     $emailReportType->bindToEmailReporter($emailReporter->id);
                 } else {
                     throw new Exception('No email report type: ' . $t);
@@ -197,7 +189,9 @@ class EmailReporterForm extends CFormModel {
 
             if (is_array($this->selectionTags)) {
                 foreach ($this->selectionTags as $t) {
-                    if (($tag = Tag::model()->findByPk($t))) {
+                    if (($tag = Tag::model()->findByAttributes(array(
+                        'name' => $t,
+                    )))) {
                         $tag->bindToEmailReporter($emailReporter->id);
                     }
                 }
@@ -214,7 +208,118 @@ class EmailReporterForm extends CFormModel {
     }
     
     public function edit($emailReporterId) {
+        if (!$this->validate()) {
+            return false;
+        }
         
+        $transaction = Yii::app()->db->beginTransaction();
+        $emailReporter = EmailReporter::model()->findByPk($emailReporterId);
+        
+        try {
+            /**
+             * Email Period
+             */
+            
+            $emailPeriodValue = 0;
+            
+            switch ($this->updatePeriodType) {
+                case EmailPeriodType::TYPE_DAYS_OF_THE_WEEK:
+                    $emailPeriodValue = $this->updatePeriodValueDays;
+                    break;
+                case EmailPeriodType::TYPE_DATES_OF_THE_MONTH:
+                    $emailPeriodValue = $this->updatePeriodValueDates;
+                    break;
+                case EmailPeriodType::TYPE_MONTHS_OF_THE_YEAR:
+                    $emailPeriodValue = $this->updatePeriodValueMonths;
+                    break;
+                default:
+                    throw new Exception('Unknown period type ' . $this->updatePeriodType);
+                    break;
+            }
+            
+            EmailPeriod::model()->updateByPk($emailReporter->email_period_id, array(
+                'email_period_type_id' => $this->updatePeriodType,
+                'value' => CJSON::encode($emailPeriodValue),
+            ));
+
+            /**
+             * Email Reporter
+             */
+            
+            EmailReporter::model()->updateByPk($emailReporter->id, array(
+                'selection_period' => $this->selectionPeriod,
+                'is_updated_only' => $this->isUpdatedOnly,
+            ));
+
+            /**
+             * Email
+             */
+            
+            Yii::app()->db->createCommand()->delete('lds_email_reporter_email', 'email_reporter_id = :email_reporter_id', array(
+                ':email_reporter_id' => $emailReporter->id,
+            ));
+            
+            foreach ($this->email as $e) {
+                $email = null;
+                
+                if (!($email = Email::model()->findByAttributes(array(
+                    'address' => $e,
+                )))) {
+                    $email = new Email();
+                    $email->address = $e;
+
+                    if (!$email->save()) {
+                        throw new Exception('Can\'t save email: ' . print_r($email->getErrors(), true));
+                    }
+                }
+
+                $email->bindToEmailReporter($emailReporter->id);
+            }
+
+            /**
+             * Email Report Type
+             */
+            
+            Yii::app()->db->createCommand()->delete('lds_email_reporter_report_type', 'email_reporter_id = :email_reporter_id', array(
+                ':email_reporter_id' => $emailReporter->id,
+            ));
+
+            foreach ($this->reportTypes as $t) {
+                if (($emailReportType = EmailReportType::model()->findByAttributes(array(
+                    'name' => $t,
+                )))) {
+                    $emailReportType->bindToEmailReporter($emailReporter->id);
+                } else {
+                    throw new Exception('No email report type: ' . $t);
+                }
+            }
+
+            /**
+             * Tag
+             */
+            
+            Yii::app()->db->createCommand()->delete('lds_email_reporter_tag', 'email_reporter_id = :email_reporter_id', array(
+                ':email_reporter_id' => $emailReporter->id,
+            ));
+
+            if (is_array($this->selectionTags)) {
+                foreach ($this->selectionTags as $t) {
+                    if (($tag = Tag::model()->findByAttributes(array(
+                        'name' => $t,
+                    )))) {
+                        $tag->bindToEmailReporter($emailReporter->id);
+                    }
+                }
+            }
+            
+            $transaction->commit();
+            
+            return true;
+        } catch (Exception $ex) {
+            $transaction->rollback();
+
+            throw new Exception($ex->getMessage());
+        }
     }
     
 }

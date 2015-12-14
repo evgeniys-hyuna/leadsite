@@ -112,8 +112,14 @@
     </div>
 
     <div class="row">
-        <?= CHtml::submitButton('Add', array(
+        <?= CHtml::submitButton('Edit', array(
             'class' => 'btn btn-success',
+        )) ?>
+        
+        <?= CHtml::button('Delete', array(
+            'class' => 'btn btn-danger',
+            'data-toggle' => 'modal',
+            'data-target' => '#mdlDeleteEmailReporter',
         )) ?>
     </div>
 </div>

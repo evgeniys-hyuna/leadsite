@@ -125,10 +125,14 @@ class Tag extends CActiveRecord {
             throw new Exception('EmailReporter does not exists: ' . $emailReporterId);
         }
         
-        if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_tag')->queryScalar(array(
-            'email_reporter_id' => $emailReporterId,
-            'tag_id' => $this->id,
-        ))) {
+        if (Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('lds_email_reporter_tag')
+                ->where('email_reporter_id = :email_reporter_id', array(
+                    ':email_reporter_id' => $emailReporterId,
+                ))->andWhere('tag_id = :tag_id', array(
+                    ':tag_id' => $this->id,
+                ))->queryScalar()) {
             return;
         }
         

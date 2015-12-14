@@ -35,9 +35,15 @@
                         break;
                 }
                 
-                $period = array_intersect_key($period, $e->emailPeriod->value);
+                $period = array_intersect_key($period, array_flip($e->emailPeriod->value));
                 
                 return implode(', ', $period);
+            },
+        ),
+        array(
+            'header' => 'Selection Tags',
+            'value' => function ($e) {
+                return implode(', ', $e->getTags());
             },
         ),
         array(

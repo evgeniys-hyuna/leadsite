@@ -49,8 +49,14 @@ class EmailReporterForm extends CFormModel {
         
         if (is_array($this->email)) {
             foreach ($this->email as $e) {
-                if (!String::isEmail($e)) {
-                    $this->addError('email', 'Email "' . $e . '" is incorrect');
+                $address = $e;
+                
+                if (is_numeric($e) && ($email = Email::model()->findByPk($e))) {
+                    $address = $email->address;
+                }
+                
+                if (!String::isEmail($address)) {
+                    $this->addError('email', 'Email "' . $address . '" is incorrect');
                 }
             }
         } else {
@@ -151,13 +157,17 @@ class EmailReporterForm extends CFormModel {
             /**
              * Email
              */
-
+            
             foreach ($this->email as $e) {
-                $email;
-
-                if (!($email = Email::model()->find('address = :address', array(
-                    ':address' => $e,
-                )))) {
+                $email = null;
+                
+                if (is_numeric($e)) {
+                    if (!($email = Email::model()->findByPk($e))) {
+                        throw new Exception('Can\'t save email: ' . $e);
+                    }
+                } else if (!String::isEmail($e)) {
+                    throw new Exception('Can\'t save email: ' . $e);
+                } else {
                     $email = new Email();
                     $email->address = $e;
 
@@ -201,6 +211,10 @@ class EmailReporterForm extends CFormModel {
 
             throw new Exception($ex->getMessage());
         }
+    }
+    
+    public function edit($emailReporterId) {
+        
     }
     
 }

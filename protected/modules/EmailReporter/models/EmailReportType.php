@@ -104,10 +104,14 @@ class EmailReportType extends CActiveRecord {
             throw new Exception('EmailReporter does not exists: ' . $emailReporterId);
         }
         
-        if (Yii::app()->db->createCommand()->select('*')->from('lds_email_reporter_report_type')->queryScalar(array(
-            'email_reporter_id' => $emailReporterId,
-            'email_report_type_id' => $this->id,
-        ))) {
+        if (Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('lds_email_reporter_report_type')
+                ->where('email_reporter_id = :email_reporter_id', array(
+                    ':email_reporter_id' => $emailReporterId,
+                ))->andWhere('email_report_type_id = :email_report_type_id', array(
+                    ':email_report_type_id' => $this->id,
+                ))->queryScalar()) {
             return;
         }
         

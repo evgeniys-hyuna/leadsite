@@ -143,5 +143,23 @@ class EmailReporter extends CActiveRecord {
         
         return $result;
     }
+    
+    public function getTags() {
+        $result = array();
+        
+        foreach ($this->tags as $t) {
+            $result[] = $t->name;
+        }
+        
+        return $result;
+    }
+    
+//    public function clearEmails() {
+//        Yii::app()->db->createCommand()->delete('lds_email_reporter_email', 'email_reporter_id = :email_reporter_id', array(
+//            ':email_reporter_id' => $this->id,
+//        ));
+//        
+//        return true;
+//    }
 
 }

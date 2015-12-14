@@ -153,5 +153,55 @@ class EmailReporter extends CActiveRecord {
         
         return $result;
     }
+    
+    public function isUpdateNeeded() {
+        $needle = 0;
+        $haystack = array();
+        
+        switch ($this->emailPeriod->email_period_type_id) {
+            case EmailPeriodType::TYPE_DAYS_OF_THE_WEEK:
+                $needle = date('D');
+                $haystack = Time::getDaysOfTheWeek(false, true);
+                break;
+            case EmailPeriodType::TYPE_DATES_OF_THE_MONTH:
+                $needle = date('d');
+                $haystack = Time::getDatesOfTheMonth();
+                break;
+            case EmailPeriodType::TYPE_MONTHS_OF_THE_YEAR:
+                $needle = date('M');
+                $haystack = Time::getMonthsOfTheYear(false, true);
+                break;
+            default:
+                throw new Exception('Unknown period type ' . $this->emailPeriod->email_period_type_id);
+                break;
+        }
+        
+        return in_array($needle, array_intersect_key($haystack, array_flip($this->emailPeriod->value)));
+    }
+    
+    public function send() {
+        $reportHtml = file_get_contents(Settings::getValue(Settings::LAST_REPORT_LEADS));
+        
+        if (!$reportHtml) {
+            return false;
+        }
+        
+        $title = Yii::app()->name . ' Report';
+        $body = String::build('<h1>{title}</h1><br /><br />{report}', array(
+            'title' => $title,
+            'report' => $reportHtml,
+        ));
 
+        
+        foreach ($this->emails as $e) {
+            $e->send($reportHtml, array(
+                Settings::getValue(Settings::LAST_REPORT_LEADS),
+                Settings::getValue(Settings::LAST_REPORT_ALEXA),
+            ));
+        }
+        
+        $this->last_sent_at = date(Time::FORMAT_STANDART);
+        $this->update();
+    }
+    
 }

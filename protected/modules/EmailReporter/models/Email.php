@@ -133,5 +133,21 @@ class Email extends CActiveRecord {
             ));
         }
     }
+    
+    public function send($body, $attachments = array()) {
+        Yii::import('application.extensions.phpmailer.JPhpMailer');
+        
+        $mail = new JPhpMailer();
+        $mail->SetFrom('noreply@ad-center.com');
+        $mail->AddAddress($this->address);
+        $mail->Subject = Yii::app()->name . ' Report';
+        $mail->MsgHTML($body);
+        
+        foreach ($attachments as $a) {
+            $mail->AddAttachment($a);
+        }
+        
+        return $mail->Send();
+    }
 
 }

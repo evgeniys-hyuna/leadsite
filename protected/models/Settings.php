@@ -108,21 +108,28 @@ class Settings extends CActiveRecord {
     }
     
     public static function setValue($name, $value) {
-        try {
-            Settings::model()->update(array(
-                'value' => $value,
-            ), 'name = :name', array(
-                ':name' => $name,
-            ));
-        } catch (Exception $ex) {
-            $settings = new Settings();
-            $settings->name = $name;
-            $settings->value = $value;
-            
-            if (!$settings->save()) {
-                throw new Exception('Can\'t save settings. ' . print_r($settings->getErrors(), true));
-            }
-        }
+        Yii::app()->db->createCommand()->update('lds_settings', array(
+            'value' => $value,
+        ), 'name = :name', array(
+            ':name' => $name,
+        ));
+//        
+//        
+//        try {
+//            Settings::model()->update(array(
+//                'value' => $value,
+//            ), 'name = :name', array(
+//                ':name' => $name,
+//            ));
+//        } catch (Exception $ex) {
+//            $settings = new Settings();
+//            $settings->name = $name;
+//            $settings->value = $value;
+//            
+//            if (!$settings->save()) {
+//                throw new Exception('Can\'t save settings. ' . print_r($settings->getErrors(), true));
+//            }
+//        }
     }
 
 }

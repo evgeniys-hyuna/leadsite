@@ -206,21 +206,29 @@ class EmailReporter extends CActiveRecord {
                     
                     // Select keywords for report
                     
-                    $dbCommand = Yii::app()->db->createCommand();
-                    $dbCommand->select('name');
-                    $dbCommand->from('lds_keyword');
+                    $keywordCriteria = new CDbCriteria();
+                    $keywordCriteria->alias = 'keyword';
+                    $keywordCriteria->with = array(
+                        'tags',
+                    );
                     
                     if ($this->is_updated_only) {
-                        $dbCommand->where('unix_timestamp(created_at) > unix_timestamp(now()) - :period', array(
-                            ':period' => $selectionPeriod,
-                        ));
-                        $dbCommand->orWhere('unix_timestamp(updated_at) > unix_timestamp(now()) - :period', array(
-                            ':period' => $selectionPeriod,
-                        ));
+                        $keywordCriteria->addCondition('unix_timestamp(keyword.created_at) > unix_timestamp(now()) - :period');
+                        $keywordCriteria->addCondition('unix_timestamp(keyword.updated_at) > unix_timestamp(now()) - :period');
+                        $keywordCriteria->params[':period'] = $selectionPeriod;
                     }
                     
-                    $updatedKeywords = $dbCommand->queryColumn();
-        
+                    if (count(($tags = $this->getTags())) > 0) {
+                        $keywordCriteria->addInCondition('tags.name', $tags);
+                    }
+                    
+                    $keyword = Keyword::model()->findAll($keywordCriteria);
+                    $updatedKeywords = array();
+                    
+                    foreach ($keyword as $k) {
+                        $updatedKeywords[] = $k->name;
+                    }
+                    
                     // Create archive
                     
                     $zip = new ZipArchive();

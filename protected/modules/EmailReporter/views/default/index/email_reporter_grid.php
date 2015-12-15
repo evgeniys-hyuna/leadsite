@@ -48,6 +48,13 @@
             },
         ),
         array(
+            'name' => 'is_updated_only',
+            'header' => 'Updated Only',
+            'value' => function ($e) {
+                return $e->is_updated_only ? 'Yes' : 'No';
+            },
+        ),
+        array(
             'header' => 'Selection Tags',
             'value' => function ($e) {
                 return implode(', ', $e->getTags());

@@ -10,6 +10,7 @@
         <div class="panel-body">
             <?= $this->renderPartial(Yii::app()->params['emailReporterView'] . 'edit.edit_form', array(
                 'emailReporterForm' => $emailReporterForm,
+                'emailReporter' => $emailReporter,
             )) ?>
         </div>
     </div>

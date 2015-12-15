@@ -3,6 +3,13 @@
     'dataProvider' => $emailReporter->search(),
     'columns' => array(
         array(
+            'name' => 'id',
+            'header' => '#',
+            'value' => function ($e) {
+                return $e->id;
+            },
+        ),
+        array(
             'name' => 'email',
             'header' => 'Email',
             'type' => 'raw',
@@ -38,6 +45,13 @@
                 $period = array_intersect_key($period, array_flip($e->emailPeriod->value));
                 
                 return implode(', ', $period);
+            },
+        ),
+        array(
+            'name' => 'is_updated_only',
+            'header' => 'Updated Only',
+            'value' => function ($e) {
+                return $e->is_updated_only ? 'Yes' : 'No';
             },
         ),
         array(

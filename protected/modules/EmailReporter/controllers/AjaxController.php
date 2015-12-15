@@ -7,12 +7,16 @@
  */
 class AjaxController extends Controller {
     
-    public function suggestEmail() {
+    public function actionSendEmail($emailReporterId) { 
+        $emailReporter = EmailReporter::model()->findByPk($emailReporterId);
         
-    }
-    
-    public function actionDeleteEmail() {
+        try {
+            $emailReporter->send();
+        } catch (Exception $ex) {
+            Ajax::reply(false, $ex->getMessage());
+        }
         
+        Ajax::reply(true);
     }
     
 }

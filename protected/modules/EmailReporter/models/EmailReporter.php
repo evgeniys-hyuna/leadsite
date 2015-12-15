@@ -180,28 +180,104 @@ class EmailReporter extends CActiveRecord {
     }
     
     public function send() {
-        $reportHtml = file_get_contents(Settings::getValue(Settings::LAST_REPORT_LEADS));
+        // Define paths
+        $reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
+        $alexaTemporaryDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
+        $alexaTemporaryArchive = $reportsDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
+        $attachments = array();
         
-        if (!$reportHtml) {
-            return false;
+        foreach ($this->emailReportTypes as $t) {
+            switch ($t->id) {
+                case EmailReportType::TYPE_LEADS:
+                    $attachments[] = Settings::getValue(Settings::LAST_REPORT_LEADS);
+                    break;
+                case EmailReportType::TYPE_ALEXA:
+                    // Define selection period
+                    
+                    $selectionPeriod = 0;
+                    
+                    if ($this->selection_period > 0) {
+                        $selectionPeriod = $this->selection_period;
+                    } else if (isset($this->last_sent_at)) {
+                        $selectionPeriod = time() - strtotime($this->last_sent_at);
+                    } else {
+                        $selectionPeriod = Time::SECONDS_IN_DAY;
+                    }
+                    
+                    // Select keywords for report
+                    
+                    $keywordCriteria = new CDbCriteria();
+                    $keywordCriteria->alias = 'keyword';
+                    $keywordCriteria->with = array(
+                        'tags',
+                    );
+                    
+                    if ($this->is_updated_only) {
+                        $keywordCriteria->addCondition('unix_timestamp(keyword.created_at) > unix_timestamp(now()) - :period');
+                        $keywordCriteria->addCondition('unix_timestamp(keyword.updated_at) > unix_timestamp(now()) - :period');
+                        $keywordCriteria->params[':period'] = $selectionPeriod;
+                    }
+                    
+                    if (count(($tags = $this->getTags())) > 0) {
+                        $keywordCriteria->addInCondition('tags.name', $tags);
+                    }
+                    
+                    $keyword = Keyword::model()->findAll($keywordCriteria);
+                    $updatedKeywords = array();
+                    
+                    foreach ($keyword as $k) {
+                        $updatedKeywords[] = $k->name;
+                    }
+                    
+                    // Create archive
+                    
+                    $zip = new ZipArchive();
+
+                    if (!$zip->open($alexaTemporaryArchive, ZipArchive::CREATE)) {
+                        throw new Exception('Can\'t open or create ZIP file');
+                    }
+
+                    $files = scandir($alexaTemporaryDirectory);
+
+                    foreach ($files as $f) {
+                        if (in_array($f, array('.', '..'))) {
+                            continue;
+                        }
+
+                        if (in_array(substr($f, 0, strpos($f, pathinfo($f, PATHINFO_EXTENSION)) - 1), $updatedKeywords)) {
+                            $zip->addFile($alexaTemporaryDirectory . DIRECTORY_SEPARATOR . $f, $f);
+                        }
+                    }
+
+                    $zip->close();
+                    
+                    // Add archive
+                    
+                    if (file_exists($alexaTemporaryArchive)) {
+                        $attachments[] = $alexaTemporaryArchive;
+                    }
+                    
+                    break;
+            }
         }
         
-        $title = Yii::app()->name . ' Report';
-        $body = String::build('<h1>{title}</h1><br /><br />{report}', array(
-            'title' => $title,
-            'report' => $reportHtml,
+        $body = String::build('<h2>{title}</h2><br />Email Reporter #{email_reporter_id}', array(
+            'title' => Yii::app()->name . ' Report',
+            'email_reporter_id' => $this->id,
         ));
 
-        
         foreach ($this->emails as $e) {
-            $e->send($reportHtml, array(
-                Settings::getValue(Settings::LAST_REPORT_LEADS),
-                Settings::getValue(Settings::LAST_REPORT_ALEXA),
-            ));
+            $e->send($body, $attachments);
         }
         
         $this->last_sent_at = date(Time::FORMAT_STANDART);
         $this->update();
+        
+        // Delete archive
+        
+        if (file_exists($alexaTemporaryArchive)) {
+            unlink($alexaTemporaryArchive);
+        }
     }
     
 }

@@ -180,28 +180,90 @@ class EmailReporter extends CActiveRecord {
     }
     
     public function send() {
-        $reportHtml = file_get_contents(Settings::getValue(Settings::LAST_REPORT_LEADS));
+        // Define paths
+        $reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
+        $alexaTemporaryDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
+        $alexaTemporaryArchive = $reportsDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
         
-        if (!$reportHtml) {
-            return false;
-        }
-        
-        $title = Yii::app()->name . ' Report';
-        $body = String::build('<h1>{title}</h1><br /><br />{report}', array(
-            'title' => $title,
-            'report' => $reportHtml,
+        $body = String::build('<h2>{title}</h2><br />Email Reporter #{email_reporter_id}', array(
+            'title' => Yii::app()->name . ' Report',
+            'email_reporter_id' => $this->id,
         ));
-
+        $attachments = array();
         
+        foreach ($this->emailReportTypes as $t) {
+            switch ($t->id) {
+                case EmailReportType::TYPE_LEADS:
+                    $attachments[] = Settings::getValue(Settings::LAST_REPORT_LEADS);
+                    break;
+                case EmailReportType::TYPE_ALEXA:
+                    // Define selection period
+                    
+                    $selectionPeriod = 0;
+                    
+                    if ($this->selection_period > 0) {
+                        $selectionPeriod = $this->selection_period;
+                    } else if (isset($this->last_sent_at)) {
+                        $selectionPeriod = time() - strtotime($this->last_sent_at);
+                    } else {
+                        $selectionPeriod = Time::SECONDS_IN_DAY;
+                    }
+                    
+                    // Select keywords for report
+                    
+                    $updatedKeywords = Yii::app()->db->createCommand()
+                            ->select('name')
+                            ->from('lds_keyword')
+                            ->where('unix_timestamp(created_at) > unix_timestamp(now()) - :period', array(
+                                ':period' => $selectionPeriod,
+                            ))
+                            ->orWhere('unix_timestamp(updated_at) > unix_timestamp(now()) - :period', array(
+                                ':period' => $selectionPeriod,
+                            ))
+                            ->queryColumn();
+
+                    // Create archive
+                    
+                    $zip = new ZipArchive();
+
+                    if (!$zip->open($alexaTemporaryArchive, ZipArchive::CREATE)) {
+                        throw new Exception('Can\'t open or create ZIP file');
+                    }
+
+                    $files = scandir($reportsDirectory);
+
+                    foreach ($files as $f) {
+                        if (in_array($f, array('.', '..'))) {
+                            continue;
+                        }
+
+                        if (in_array(substr($f, 0, strpos($f, pathinfo($f, PATHINFO_EXTENSION)) - 1), $updatedKeywords)) {
+                            $zip->addFile($reportsDirectory . DIRECTORY_SEPARATOR . $f, $f);
+                        }
+                    }
+
+                    $zip->close();
+                    
+                    // Add archive
+                    
+                    $attachments[] = $alexaTemporaryArchive;
+                    
+                    break;
+            }
+        }
+
         foreach ($this->emails as $e) {
-            $e->send($reportHtml, array(
-                Settings::getValue(Settings::LAST_REPORT_LEADS),
-                Settings::getValue(Settings::LAST_REPORT_ALEXA),
-            ));
+            $e->send($body, $attachments);
         }
         
         $this->last_sent_at = date(Time::FORMAT_STANDART);
         $this->update();
+        
+        // Delete archive
+        
+        if (isset($alexaTemporaryArchive)) {
+            unlink($alexaTemporaryArchive);
+        }
     }
     
 }

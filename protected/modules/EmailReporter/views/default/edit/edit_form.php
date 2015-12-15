@@ -121,6 +121,14 @@
             'data-toggle' => 'modal',
             'data-target' => '#mdlDeleteEmailReporter',
         )) ?>
+        
+        <?= CHtml::ajaxButton('Send Now', Yii::app()->createUrl('/EmailReporter/ajax/sendEmail', array(
+            'emailReporterId' => $emailReporter->id,
+        )), array(
+            'success' => 'js:function (response) { sendEmailSuccess(response); }',
+        ), array(
+            'class' => 'btn btn-info',
+        )) ?>
     </div>
 </div>
 
@@ -154,5 +162,9 @@ $("#ddlUpdatePeriodType").change(function () {
             break;
     }
 });
+
+function sendEmailSuccess(response) {
+    console.log(response);
+}
 
 </script>

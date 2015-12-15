@@ -184,11 +184,6 @@ class EmailReporter extends CActiveRecord {
         $reportsDirectory = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'reports';
         $alexaTemporaryDirectory = $reportsDirectory . DIRECTORY_SEPARATOR . 'alexa_tmp';
         $alexaTemporaryArchive = $reportsDirectory . DIRECTORY_SEPARATOR . date(Time::FORMAT_PRETTY) . '.zip';
-        
-        $body = String::build('<h2>{title}</h2><br />Email Reporter #{email_reporter_id}', array(
-            'title' => Yii::app()->name . ' Report',
-            'email_reporter_id' => $this->id,
-        ));
         $attachments = array();
         
         foreach ($this->emailReportTypes as $t) {
@@ -211,17 +206,21 @@ class EmailReporter extends CActiveRecord {
                     
                     // Select keywords for report
                     
-                    $updatedKeywords = Yii::app()->db->createCommand()
-                            ->select('name')
-                            ->from('lds_keyword')
-                            ->where('unix_timestamp(created_at) > unix_timestamp(now()) - :period', array(
-                                ':period' => $selectionPeriod,
-                            ))
-                            ->orWhere('unix_timestamp(updated_at) > unix_timestamp(now()) - :period', array(
-                                ':period' => $selectionPeriod,
-                            ))
-                            ->queryColumn();
-
+                    $dbCommand = Yii::app()->db->createCommand();
+                    $dbCommand->select('name');
+                    $dbCommand->from('lds_keyword');
+                    
+                    if ($this->is_updated_only) {
+                        $dbCommand->where('unix_timestamp(created_at) > unix_timestamp(now()) - :period', array(
+                            ':period' => $selectionPeriod,
+                        ));
+                        $dbCommand->orWhere('unix_timestamp(updated_at) > unix_timestamp(now()) - :period', array(
+                            ':period' => $selectionPeriod,
+                        ));
+                    }
+                    
+                    $updatedKeywords = $dbCommand->queryColumn();
+        
                     // Create archive
                     
                     $zip = new ZipArchive();
@@ -230,7 +229,7 @@ class EmailReporter extends CActiveRecord {
                         throw new Exception('Can\'t open or create ZIP file');
                     }
 
-                    $files = scandir($reportsDirectory);
+                    $files = scandir($alexaTemporaryDirectory);
 
                     foreach ($files as $f) {
                         if (in_array($f, array('.', '..'))) {
@@ -238,7 +237,7 @@ class EmailReporter extends CActiveRecord {
                         }
 
                         if (in_array(substr($f, 0, strpos($f, pathinfo($f, PATHINFO_EXTENSION)) - 1), $updatedKeywords)) {
-                            $zip->addFile($reportsDirectory . DIRECTORY_SEPARATOR . $f, $f);
+                            $zip->addFile($alexaTemporaryDirectory . DIRECTORY_SEPARATOR . $f, $f);
                         }
                     }
 
@@ -246,11 +245,18 @@ class EmailReporter extends CActiveRecord {
                     
                     // Add archive
                     
-                    $attachments[] = $alexaTemporaryArchive;
+                    if (file_exists($alexaTemporaryArchive)) {
+                        $attachments[] = $alexaTemporaryArchive;
+                    }
                     
                     break;
             }
         }
+        
+        $body = String::build('<h2>{title}</h2><br />Email Reporter #{email_reporter_id}', array(
+            'title' => Yii::app()->name . ' Report',
+            'email_reporter_id' => $this->id,
+        ));
 
         foreach ($this->emails as $e) {
             $e->send($body, $attachments);
@@ -261,7 +267,7 @@ class EmailReporter extends CActiveRecord {
         
         // Delete archive
         
-        if (isset($alexaTemporaryArchive)) {
+        if (file_exists($alexaTemporaryArchive)) {
             unlink($alexaTemporaryArchive);
         }
     }

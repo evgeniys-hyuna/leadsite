@@ -3,6 +3,13 @@
     'dataProvider' => $emailReporter->search(),
     'columns' => array(
         array(
+            'name' => 'id',
+            'header' => '#',
+            'value' => function ($e) {
+                return $e->id;
+            },
+        ),
+        array(
             'name' => 'email',
             'header' => 'Email',
             'type' => 'raw',
